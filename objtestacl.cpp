@@ -4,14 +4,15 @@ int main(int argc, char *argv[])
 {
 	int ch;
 	opterr = 0;
-	string uname; //user name
+	string uname; /* user name */
 	string uname2;
-	string gname; //group name
+	string gname; /* group name */
 	string access;
-	string object_name; //object name
+	string object_name; /* object name */
 	string acl_name;
 	char *object_name_parse[2];
-	//input commands
+
+	/* input commands */
 	while ((ch = getopt(argc, argv, "u:g:a:")) != -1) {
 		switch (ch) {
 		case 'u':
@@ -28,13 +29,13 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 	}
-	//check commands
+	/* check commands */
 	if ((gname.empty()) || (uname.empty()) || (argc != 8)) {
 		cerr << "command not found" << endl;
 		return 1;
 	}
 	object_name = argv[7];
-	//check user name, group name whether valid
+	/* check user name, group name whether valid */
 	if (!check_name_valid(uname)) {
 		cerr << "user name not valid" << endl;
 		cerr << "only letters, numbers, underscore are allowed" << endl;
@@ -45,7 +46,7 @@ int main(int argc, char *argv[])
 		cerr << "only letters, numbers, underscore are allowed" << endl;
 		return 1;
 	}
-	//check the condition that one references other users' objects
+	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
 		char *input_command = new char[object_name.length() + 1];
 		strcpy(input_command, object_name.c_str());
@@ -60,17 +61,16 @@ int main(int argc, char *argv[])
 		cerr << "command not found" << endl;
 		return 1;
 	}
-	//check object name whether valid
+	/* check object name whether valid */
 	if (!check_name_valid(object_name)) {
 		cerr << "object name not valid" << endl;
 		cerr << "only letters, numbers, underscore are allowed" << endl;
 		return 1;
 	}
-	//check user name, group name whether exist
+	/* check user name, group name whether exist */
 	if (!check_user_group(uname, gname))
 		return 1;
-
-	//check allowed or denied
+	/* check allowed or denied */
 	if (!check_acl(acl_name, uname, gname, access))
 		cerr << "denied" << endl;
 	else

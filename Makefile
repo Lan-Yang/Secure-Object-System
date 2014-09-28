@@ -44,11 +44,30 @@ function.o: functions.cpp header.h
 # Execution will stop if a program has a non-zero return code;
 # precede the line with a - to override that
 test:	build
-	./sample a b "def" "hello world" <test1
+	./objput -u u1 -g g1 doc < testfile
 	@echo "------------"
-	./sample <test2
+	./objget -u u1 -g g1 doc
 	@echo "------------"
-	./sample " leading" "trailing " "blanks"  <test3
+	-./objget -u u@ -g g1 doc
+	@echo "------------"
+	-./objget -u u1 -g g@ doc
+	@echo "------------"
+	-./objget -u u1 -g g@ do@
+	@echo "------------"
+	./objlist -u u1
+	@echo "------------"
+	./objgetacl -u u1 -g g1 doc
+	@echo "------------"
+	./objtestacl -u u1 -g g3 -a r doc
+	@echo "------------"
+	./objtestacl -u u2 -g g1 -a r doc
+	@echo "------------"
+	./objtestacl -u u2 -g g1 -a r u1+doc
+	@echo "------------"
+	./objsetacl -u u1 -g g1 doc < newacl
+	@echo "------------"
+	./objsetacl -u u2 -g g1 u1+doc < newacl
+
 
 exec: build
 	./sample $(ARG)

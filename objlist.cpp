@@ -4,18 +4,19 @@ int main(int argc, char *argv[])
 {
 	int ch;
 	size_t i;
-	int flag = 0; //mark whether with "-l"
+	int flag = 0; /* mark whether with "-l" */
 	opterr = 0;
-	string uname; //user name
-	string file_name; //file name
+	string uname; /* user name */
+	string file_name; /* file name */
 	string tmp;
 	char *user_object_parse[3];
-	char *user_group_parse[11]; //a user can at most in 10 groups
+	char *user_group_parse[11]; /* a user can at most in 10 groups */
 	vector<string> usergroup;
 	vector<string> userobject;
 	vector<string> objlist;
 	ifstream file;
-	//input commands
+
+	/* input commands */
 	while ((ch = getopt(argc, argv, "u:l")) != -1) {
 		switch (ch) {
 		case 'u':
@@ -33,13 +34,13 @@ int main(int argc, char *argv[])
 		cerr << "command not found" << endl;
 		return 1;
 	}
-	//check user name whether valid
+	/* check user name whether valid */
 	if (!check_name_valid(uname)) {
 		cerr << "user name not valid" << endl;
 		cerr << "only letters, numbers, underscore are allowed" << endl;
 		return 1;
 	}
-	//check whether user name exist
+	/* check whether user name exist */
 	file.open("user_group");
 	if (!file) {
 		cerr << "file can not open" << endl;
@@ -48,7 +49,7 @@ int main(int argc, char *argv[])
 	while (!file.eof()) {
 		getline(file, tmp);
 		if (tmp.length() !=
-		                0) //avoid empty string push to vector
+		                0) /* avoid empty string push to vector */
 			usergroup.push_back(tmp);
 	}
 	file.close();
@@ -57,7 +58,7 @@ int main(int argc, char *argv[])
 		char *input_command = new char[usergroup[i].length() + 1];
 		strcpy(input_command, usergroup[i].c_str());
 		parse_command(input_command, user_group_parse);
-		if (user_group_parse[0] == uname) { //if the user name matches
+		if (user_group_parse[0] == uname) { /* user name matches */
 			delete[] input_command;
 			break;
 		}
@@ -67,7 +68,7 @@ int main(int argc, char *argv[])
 		cerr << "user does not exist" << endl;
 		return 1;
 	}
-	//check if the user has the privilege to access this file
+	/* check if the user has the privilege to access this file */
 	file.open("user_object");
 	if (!file) {
 		cerr << "file can not open" << endl;
@@ -92,7 +93,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	// if the user has an object list, then print it
+	/* if the user has an object list, then print it */
 	for (i = 0; i < objlist.size(); i++) {
 		if (flag == 1) {
 			file_name = uname + "-" + objlist[i];

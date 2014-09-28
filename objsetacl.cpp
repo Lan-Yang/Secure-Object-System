@@ -4,15 +4,16 @@ int main(int argc, char *argv[])
 {
 	int ch;
 	opterr = 0;
-	string uname; //user name
+	string uname; /* user name */
 	string uname2;
-	string gname; //group name
-	string object_name; //object name
+	string gname; /* group name */
+	string object_name; /* object name */
 	string acl_name;
 	char *object_name_parse[2];
 	ofstream file;
 	char tmp;
-	//input commands
+
+	/* input commands */
 	while ((ch = getopt(argc, argv, "u:g:")) != -1) {
 		switch (ch) {
 		case 'u':
@@ -26,13 +27,13 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 	}
-	//check commands
+	/* check commands */
 	if ((gname.empty()) || (uname.empty()) || (argc != 6)) {
 		cerr << "command not found" << endl;
 		return 1;
 	}
 	object_name = argv[5];
-	//check user name, group name whether valid
+	/* check user name, group name whether valid */
 	if (!check_name_valid(uname)) {
 		cerr << "user name not valid" << endl;
 		cerr << "only letters, numbers, underscore are allowed" << endl;
@@ -43,10 +44,10 @@ int main(int argc, char *argv[])
 		cerr << "only letters, numbers, underscore are allowed" << endl;
 		return 1;
 	}
-	//check user name, group name whether exist
+	/* check user name, group name whether exist */
 	if (!check_user_group(uname, gname))
 		return 1;
-	//check the condition that one references other users' objects
+	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
 		char *input_command = new char[object_name.length() + 1];
 		strcpy(input_command, object_name.c_str());
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
 		cerr << "command not found" << endl;
 		return 1;
 	}
-	//check object name whether valid
+	/* check object name whether valid */
 	if (!check_name_valid(object_name)) {
 		cerr << "object name not valid" << endl;
 		cerr << "only letters, numbers, underscore are allowed" << endl;
@@ -71,13 +72,13 @@ int main(int argc, char *argv[])
 	cout << object_name << endl;
 	cout << uname << " " << gname << endl;
 
-	//check user whether have "p" permission to acl
+	/* check user whether have "p" permission to acl */
 	if (!check_acl(acl_name, uname, gname, "p")) {
 		cerr << "no permission to change acl" << endl;
 		return 1;
 	}
 	cout << "hi" << endl;
-	//read file from stdin, write its content to object
+	/* read file from stdin, write its content to object */
 	file.open(acl_name.c_str());
 	if (!file) {
 		cerr << "file can not open" << endl;
@@ -86,7 +87,7 @@ int main(int argc, char *argv[])
 
 	while (cin.peek() != char_traits<char>::eof()) {
 		tmp = cin.get();
-		//file.put(tmp);
+		/* file.put(tmp); */
 		file << tmp;
 	}
 	file.close();

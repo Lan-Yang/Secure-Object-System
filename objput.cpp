@@ -5,9 +5,9 @@ int main(int argc, char *argv[])
 	int ch;
 	int flag = 0;
 	opterr = 0;
-	string uname; //user name
-	string gname; //group name
-	string object_name; //object name
+	string uname; /* user name */
+	string gname; /* group name */
+	string object_name; /* object name */
 	string initial_acl;
 	string file_name;
 	string obj_user_group;
@@ -15,7 +15,8 @@ int main(int argc, char *argv[])
 	ofstream file;
 	ifstream file2;
 	char tmp;
-	//input commands
+
+	/* input commands */
 	while ((ch = getopt(argc, argv, "u:g:")) != -1) {
 		switch (ch) {
 		case 'u':
@@ -29,13 +30,13 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 	}
-	//check commands
+	/* check commands */
 	if ((gname.empty()) || (uname.empty()) || (argc != 6)) {
 		cerr << "command not found" << endl;
 		return 1;
 	}
 	object_name = argv[5];
-	//check user name, group name, object name whether valid
+	/* check user name, group name, object name whether valid */
 	if (!check_name_valid(uname)) {
 		cerr << "user name not valid" << endl;
 		cerr << "only letters, numbers, underscore are allowed" << endl;
@@ -51,10 +52,10 @@ int main(int argc, char *argv[])
 		cerr << "only letters, numbers, underscore are allowed" << endl;
 		return 1;
 	}
-	//check user name, group name whether exist
+	/* check user name, group name whether exist */
 	if (!check_user_group(uname, gname))
 		return 1;
-	//read file from stdin, write its content to object
+	/* read file from stdin, write its content to object */
 	file_name = uname + "-" + object_name;
 	file.open(file_name.c_str(), ios::out | ios::trunc);
 	while (cin.peek() != char_traits<char>::eof()) {
@@ -62,12 +63,12 @@ int main(int argc, char *argv[])
 		file << tmp;
 	}
 	file.close();
-	//initiate corresponding acl object
+	/* initiate corresponding acl object */
 	initial_acl = uname + "-" + object_name + "-acl";
 	file.open(initial_acl.c_str(), ios::out | ios::trunc);
 	file << uname << ".* rwxpv";
 	file.close();
-	//record the information into user_object
+	/* record the information into user_object */
 	file2.open("user_object");
 	if (!file2) {
 		cerr << "file can not open" << endl;

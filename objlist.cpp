@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
 				cerr << "file can not open" << endl;
 				return 1;
 			}
+			cout << uname << " " << file.tellg() << " ";
 			file.close();
 		}
 		cout << objlist[i] << endl;

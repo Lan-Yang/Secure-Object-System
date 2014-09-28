@@ -65,6 +65,8 @@ test:	build exec
 	@echo "------------"
 	-./objlist -u u1
 	@echo "------------"
+	-./objlist -u u1 -l
+	@echo "------------"
 	-./objgetacl -u u1 -g g1 doc
 	@echo "------------"
 	-./objgetacl -u u2 -g g1 doc
@@ -104,5 +106,5 @@ endif
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) *.core *.o *~ *.*~ .*~
+	rm -f $(OBJ) *.core *.o *~ *.*~ .*~ *-*
 

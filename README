@@ -1,0 +1,18 @@
+README by Lan Yang (uni: ly2331)
+
+Completed realization of six commands: objput, objget, objlist, objsetacl, 
+objgetacl and objtestacl.
+For each command, permission checking includes the following steps.
+1.	check input command's number of arguments whether right.
+2.	check user namer, group name whether legal.
+3.	check object name whether includes "+" to handle the situation that one 
+	may references others users' objects.
+4.	check object name whether legal.
+5.	check user_group to see whether user exists and belongs to the group.
+6.	check user_object to see whether user has this object.
+7.	check the corresponding acl to make sure whether user has permission.
+The object size is unlimited, but I put a limit in user and group information, 
+that is each user belongs to no more than ten groups.
+I stored the list of legal user and group names in user_group, and the list of 
+legal user and object names in user_object. When a new object was created by 
+some user, I created an initial ACL and added a record to user_object.

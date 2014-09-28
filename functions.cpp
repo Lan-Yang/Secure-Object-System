@@ -131,9 +131,8 @@ bool check_acl(string acl_name, string uname, string gname, string per)
 		}
 		delete[] input_command;
 	}
-	if (i == acl.size()) {
+	if (i == acl.size())
 		return false;
-	} else {
+	else
 		return true;
-	}
 }

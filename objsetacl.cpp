@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 	string uname2;
 	string gname; /* group name */
 	string object_name; /* object name */
-	string acl_name;
+	string acl_file_name;
 	char *object_name_parse[2];
 	ofstream file;
 	char tmp;
@@ -54,9 +54,9 @@ int main(int argc, char *argv[])
 		parse_command(input_command, object_name_parse);
 		uname2 = object_name_parse[0];
 		object_name = object_name_parse[1];
-		acl_name = uname2 + "-" + object_name + "-acl";
+		acl_file_name = uname2 + "-" + object_name + "-acl";
 	} else {
-		acl_name = uname + "-" + object_name + "-acl";
+		acl_file_name = uname + "-" + object_name + "-acl";
 	}
 	if (uname == uname2) {
 		cerr << "command not found" << endl;
@@ -68,23 +68,23 @@ int main(int argc, char *argv[])
 		cerr << "only letters, numbers, underscore are allowed" << endl;
 		return 1;
 	}
-	cout << acl_name << endl;
+	cout << acl_file_name << endl;
 	cout << object_name << endl;
 	cout << uname << " " << gname << endl;
 
 	/* check user whether have "p" permission to acl */
-	if (!check_acl(acl_name, uname, gname, "p")) {
+	if (!check_acl(acl_file_name, uname, gname, "p")) {
 		cerr << "no permission to change acl" << endl;
 		return 1;
 	}
 	cout << "hi" << endl;
 	/* read file from stdin, write its content to object */
-	file.open(acl_name.c_str());
+	file.open(acl_file_name.c_str());
 	if (!file) {
 		cerr << "file can not open" << endl;
 		return 1;
 	}
-
+	cout << "hi" << endl;
 	while (cin.peek() != char_traits<char>::eof()) {
 		tmp = cin.get();
 		/* file.put(tmp); */

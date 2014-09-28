@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	char *user_group_parse[11]; //a user can at most in 10 groups
 	vector<string> usergroup;
 	vector<string> userobject;
-	vector<string> objlist;	
+	vector<string> objlist;
 	ifstream file;
 	//input commands
 	while ((ch = getopt(argc, argv, "u:l")) != -1) {
@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
 	//check user name whether valid
 	if (!check_name_valid(uname)) {
 		cout << "user name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" <<endl;
-		return 0;	
+		cout << "only letters, numbers, underscore are allowed" << endl;
+		return 0;
 	}
 	//check whether user name exist
 	file.open("user_group");
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	while (!file.eof()) {
 		getline(file, tmp);
 		if (tmp.length() !=
-		    0) //avoid empty string push to vector
+		                0) //avoid empty string push to vector
 			usergroup.push_back(tmp);
 	}
 	file.close();
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 		cout << "user does not exist" << endl;
 		return 0;
 	}
-	//check if the user has the privilege to access this file	
+	//check if the user has the privilege to access this file
 	file.open("user_object");
 	if (!file) {
 		cout << "file can not open" << endl;
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 		if (tmp.length() != 0)
 			userobject.push_back(tmp);
 	}
-	file.close();	
+	file.close();
 	for (i = 0; i < userobject.size(); i++) {
 		char *input_command = new char[userobject[i].length() + 1];
 		strcpy(input_command, userobject[i].c_str());

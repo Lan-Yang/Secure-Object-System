@@ -34,21 +34,21 @@ int main(int argc, char *argv[])
 	//check user name, group name, object name whether valid
 	if (!check_name_valid(uname)) {
 		cout << "user name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" <<endl;
-		return 0;	
+		cout << "only letters, numbers, underscore are allowed" << endl;
+		return 0;
 	}
 	if (!check_name_valid(gname)) {
 		cout << "group name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" <<endl;
-		return 0;	
+		cout << "only letters, numbers, underscore are allowed" << endl;
+		return 0;
 	}
 	if (!check_name_valid(object_name)) {
 		cout << "object name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" <<endl;
-		return 0;	
+		cout << "only letters, numbers, underscore are allowed" << endl;
+		return 0;
 	}
 	//check user name, group name whether exist
-	if (!check_user_group(uname,gname)) 
+	if (!check_user_group(uname, gname))
 		return 0;
 	//read file from stdin, write its content to object
 	file_name = uname + "-" + object_name;

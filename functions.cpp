@@ -1,43 +1,58 @@
 #include "header.h"
-using namespace std;
-bool check_name_valid(string input)
-{
-	int i;
 
-	for (i = 0; i < input.length(); i++) {
-		if ((input[i] >= '0') && (input[i] <= '9')) {
-		} else if ((input[i] >= 'a') && (input[i] <= 'z')) {
-		} else if ((input[i] >= 'A') && (input[i] <= 'Z')) {
-		} else if (input[i] == '_') {
-		} else {
-			break;
-		}
-	}
-	if (i == input.length())
-		return true;
-	else
+void help(void)
+{
+	cerr << "error: for user name, group name and object name,"
+	     << "only letters, numbers, underscore are allowed" << endl;
+}
+
+bool check_name_valid(const string &input)
+{
+	size_t i, LL;
+
+	LL = input.size();
+	for (i = 0; i < LL; i++) {
+		if (((input[i] >= '0') && (input[i] <= '9'))
+		                || ((input[i] >= 'a') && (input[i] <= 'z'))
+		                || ((input[i] >= 'A') && (input[i] <= 'Z'))
+		                || (input[i] == '_'))
+			continue;
 		return false;
-}
-int parse_command(char *input, char *commands[])
-{
-	int i = 0;
-
-	const char token[10] = " .\t+";
-	commands[0] = strtok(input, token);
-	while (commands[i] != NULL) {
-		i++;
-		commands[i] = strtok(NULL, token);
 	}
-	return 0;
+	return true;
 }
 
-bool check_user_group(string uname, string gname)
+
+int parse_command(const string &input, vector<string> &commands)
+{
+	commands.clear();
+	int i = 0;
+	const char token[] = " .\t+";
+	size_t LL = input.size();
+	char *buf = new char[LL + 1];
+	char *saveptr;
+	char *tmp;
+
+	buf[LL] = '\0';
+	for (i = 0; i < LL; i++)
+		buf[i] = input[i];
+
+	tmp = strtok_r(buf, token, &saveptr);
+	for (i = 0; tmp != NULL; i++) {
+		commands.push_back(string(tmp));
+		tmp = strtok_r(NULL, token, &saveptr);
+	}
+
+	delete [] buf;
+	return i;
+}
+
+bool check_user_group(const string &uname, const string &gname)
 {
 	string tmp;
-	int j = 1;
-	int i;
+	int i, j = 1;
 	vector<string> usergroup;
-	char *user_group_parse[11]; /* a user can at most in 10 groups */
+	vector<string> user_group_parse; /* a user can at most in 10 groups */
 	ifstream file;
 
 	file.open("user_group");
@@ -47,28 +62,24 @@ bool check_user_group(string uname, string gname)
 	}
 	while (!file.eof()) {
 		getline(file, tmp);
-		if (tmp.length() != 0) /* avoid empty string push to vector */
+		if (!tmp.empty()) /* avoid empty string push to vector */
 			usergroup.push_back(tmp);
 	}
 	for (i = 0; i < usergroup.size(); i++) {
-		char *input_command = new char[usergroup[i].length() + 1];
-		strcpy(input_command, usergroup[i].c_str());
-		parse_command(input_command, user_group_parse);
-		if (user_group_parse[0] == uname) { /* usesname matches */
-			while (user_group_parse[j] != NULL) { 
+		parse_command(usergroup[i], user_group_parse);
+		if (user_group_parse[0] == uname) { /* username matches */
+			while (!user_group_parse[j].empty()) {
 				/* check groupname */
 				if (user_group_parse[j] == gname)
 					break;
 				j++;
 			}
-			if (user_group_parse[j] == NULL) {
+			if (user_group_parse[j].empty()) {
 				cerr << "user does not match the group" << endl;
 				return false;
 			}
-			delete[] input_command;
 			break;
 		}
-		delete[] input_command;
 	}
 	if (i == usergroup.size()) {
 		cerr << "user does not exist" << endl;
@@ -77,26 +88,18 @@ bool check_user_group(string uname, string gname)
 	return true;
 }
 
-bool check_reference(string input)
+bool check_reference(const string &input)
 {
-	int i;
-
-	for (i = 0; i < input.length(); i++) {
-		if (input[i] == '+')
-			break;
-	}
-	if (i == input.length())
-		return false;
-	else
-		return true;
+	return (input.find('+') != string::npos);
 }
 
-bool check_acl(string acl_name, string uname, string gname, string per)
+bool check_acl(const string &acl_name, const string &uname, const string &gname,
+               const string &per)
 {
 	int i;
 	string tmp;
 	vector<string> acl;
-	char *acl_parse[3]; /* user.group ops */
+	vector<string> acl_parse; /* user.group ops */
 	ifstream file;
 
 	file.open(acl_name.c_str());
@@ -110,26 +113,19 @@ bool check_acl(string acl_name, string uname, string gname, string per)
 			acl.push_back(tmp);
 	}
 	file.close();
-	for (i = 0; i < 3; i++)
-		acl_parse[i] = NULL;
+
 	for (i = 0; i < acl.size(); i++) {
-		char *input_command = new char[acl[i].length() + 1];
-		strcpy(input_command, acl[i].c_str());
-		parse_command(input_command, acl_parse);
+		parse_command(acl[i].c_str(), acl_parse);
 		if ((acl_parse[0] == uname) &&
 		                ((acl_parse[1] == gname) ||
-		                 (strcmp(acl_parse[1], "*") == 0))) {
-			if (acl_parse[2] == NULL) {
-				delete[] input_command;
+		                 ((acl_parse[1] == "*")))) {
+			if (acl_parse.size() < 3)
 				return false;
-			}
 			tmp = acl_parse[2];
 			if (tmp.find(per) != string::npos) {
-				delete[] input_command;
 				break;
 			}
 		}
-		delete[] input_command;
 	}
 	if (i == acl.size())
 		return false;

@@ -1,5 +1,5 @@
 #include "header.h"
-using namespace std;
+
 int main(int argc, char *argv[])
 {
 	int ch;
@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	vector<string> usergroup;
 	vector<string> userobject;
 	vector<string> acl;
-	char *object_name_parse[2];
+	vector<string> object_name_parse;
 	ifstream file;
 
 	/* input commands */
@@ -38,13 +38,11 @@ int main(int argc, char *argv[])
 	object_name = argv[5];
 	/* check user name, group name whether valid */
 	if (!check_name_valid(uname)) {
-		cerr << "user name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
 	if (!check_name_valid(gname)) {
-		cerr << "group name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
 	/* check username, groupname whether exist */
@@ -52,23 +50,16 @@ int main(int argc, char *argv[])
 		return 1;
 	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
-		char *input_command = new char[object_name.length() + 1];
-		strcpy(input_command, object_name.c_str());
-		parse_command(input_command, object_name_parse);
+		parse_command(object_name, object_name_parse);
 		uname2 = object_name_parse[0];
 		object_name = object_name_parse[1];
 		file_name = uname2 + "-" + object_name;
 	} else {
 		file_name = uname + "-" + object_name;
 	}
-	if (uname == uname2) {
-		cerr << "command not found" << endl;
-		return 1;
-	}
 	/* check object name whether valid */
 	if (!check_name_valid(object_name)) {
-		cerr << "object name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
 	/* check user's privilege to this file */

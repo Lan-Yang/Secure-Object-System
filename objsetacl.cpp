@@ -1,5 +1,5 @@
 #include "header.h"
-using namespace std;
+
 int main(int argc, char *argv[])
 {
 	int ch;
@@ -9,7 +9,8 @@ int main(int argc, char *argv[])
 	string gname; /* group name */
 	string object_name; /* object name */
 	string acl_file_name;
-	char *object_name_parse[2];
+	vector<string> object_name_parse;
+	FILE *fout;
 	ofstream file;
 	char tmp;
 
@@ -35,13 +36,11 @@ int main(int argc, char *argv[])
 	object_name = argv[5];
 	/* check user name, group name whether valid */
 	if (!check_name_valid(uname)) {
-		cerr << "user name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
 	if (!check_name_valid(gname)) {
-		cerr << "group name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
 	/* check user name, group name whether exist */
@@ -49,9 +48,7 @@ int main(int argc, char *argv[])
 		return 1;
 	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
-		char *input_command = new char[object_name.length() + 1];
-		strcpy(input_command, object_name.c_str());
-		parse_command(input_command, object_name_parse);
+		parse_command(object_name, object_name_parse);
 		uname2 = object_name_parse[0];
 		object_name = object_name_parse[1];
 		acl_file_name = uname2 + "-" + object_name + "-acl";
@@ -64,33 +61,28 @@ int main(int argc, char *argv[])
 	}
 	/* check object name whether valid */
 	if (!check_name_valid(object_name)) {
-		cerr << "object name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
-	cout << acl_file_name << endl;
-	cout << object_name << endl;
-	cout << uname << " " << gname << endl;
 
 	/* check user whether have "p" permission to acl */
 	if (!check_acl(acl_file_name, uname, gname, "p")) {
 		cerr << "no permission to change acl" << endl;
 		return 1;
 	}
-	cout << "hi" << endl;
 	/* read file from stdin, write its content to object */
-	file.open(acl_file_name.c_str());
-	if (!file) {
+	fout = fopen(acl_file_name.c_str(), "w");
+
+
+	//file.open(acl_file_name.c_str(), ios::out | ios::trunc);
+	if (fout == NULL) {
 		cerr << "file can not open" << endl;
 		return 1;
 	}
-	cout << "hi" << endl;
-	while (cin.peek() != char_traits<char>::eof()) {
-		tmp = cin.get();
-		/* file.put(tmp); */
-		file << tmp;
-	}
-	file.close();
+
+	while ((tmp = getchar()) != EOF)
+		fputc(tmp, fout);
+	fclose(fout);
 	return 0;
 }
 

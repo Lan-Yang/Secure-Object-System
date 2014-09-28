@@ -1,5 +1,4 @@
-# A simple Makefile
-
+# Makefile
 
 # List the object files in one place
 OBJ=objgetacl objput objget objlist objsetacl objtestacl
@@ -9,6 +8,7 @@ OBJ=objgetacl objput objget objlist objsetacl objtestacl
 # called "sample"
 
 build:	$(OBJ)
+	@cat /dev/null > user_object
 
 # "sample" requires a set of object files
 # $@ is a special variable: the target of the operation, in this case sample
@@ -81,5 +81,5 @@ exec: build
 	./sample $(ARG)
 
 clean:
-	rm -f $(OBJ) *.core *.o
+	rm -f $(OBJ) *.core *.o *~ *.*~ .*~
 

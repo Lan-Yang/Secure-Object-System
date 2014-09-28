@@ -4,10 +4,14 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <cstdlib>
+
 using namespace std;
 
-int parse_command(char *input, char *commands[]);
-bool check_name_valid(string input);
-bool check_user_group(string uname, string gname);
-bool check_reference(string input);
-bool check_acl(string acl_name, string uname, string gname, string per);
+void help(void);
+int parse_command(const string &input, vector<string> &commands);
+bool check_name_valid(const string &input);
+bool check_user_group(const string &uname, const string &gname);
+bool check_reference(const string &input);
+bool check_acl(const string &acl_name, const string &uname, const string &gname,
+               const string &per);

@@ -1,5 +1,5 @@
 #include "header.h"
-using namespace std;
+
 int main(int argc, char *argv[])
 {
 	int ch;
@@ -9,8 +9,8 @@ int main(int argc, char *argv[])
 	string uname; /* user name */
 	string file_name; /* file name */
 	string tmp;
-	char *user_object_parse[3];
-	char *user_group_parse[11]; /* a user can at most in 10 groups */
+	vector<string> user_object_parse;
+	vector<string> user_group_parse; /* a user can at most in 10 groups */
 	vector<string> usergroup;
 	vector<string> userobject;
 	vector<string> objlist;
@@ -36,8 +36,7 @@ int main(int argc, char *argv[])
 	}
 	/* check user name whether valid */
 	if (!check_name_valid(uname)) {
-		cerr << "user name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
 	/* check whether user name exist */
@@ -55,14 +54,10 @@ int main(int argc, char *argv[])
 	file.close();
 
 	for (i = 0; i < usergroup.size(); i++) {
-		char *input_command = new char[usergroup[i].length() + 1];
-		strcpy(input_command, usergroup[i].c_str());
-		parse_command(input_command, user_group_parse);
+		parse_command(usergroup[i], user_group_parse);
 		if (user_group_parse[0] == uname) { /* user name matches */
-			delete[] input_command;
 			break;
 		}
-		delete[] input_command;
 	}
 	if (i == usergroup.size()) {
 		cerr << "user does not exist" << endl;
@@ -102,7 +97,6 @@ int main(int argc, char *argv[])
 				cerr << "file can not open" << endl;
 				return 1;
 			}
-			cout << uname << " " << file.tellg() << " ";
 			file.close();
 		}
 		cout << objlist[i] << endl;

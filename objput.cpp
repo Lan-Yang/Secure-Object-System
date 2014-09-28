@@ -1,5 +1,5 @@
 #include "header.h"
-using namespace std;
+
 int main(int argc, char *argv[])
 {
 	int ch;
@@ -12,8 +12,7 @@ int main(int argc, char *argv[])
 	string file_name;
 	string obj_user_group;
 	string tmp_line;
-	ofstream file;
-	ifstream file2;
+	FILE *fout;
 	char tmp;
 
 	/* input commands */
@@ -38,18 +37,15 @@ int main(int argc, char *argv[])
 	object_name = argv[5];
 	/* check user name, group name, object name whether valid */
 	if (!check_name_valid(uname)) {
-		cerr << "user name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
 	if (!check_name_valid(gname)) {
-		cerr << "group name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
 	if (!check_name_valid(object_name)) {
-		cerr << "object name not valid" << endl;
-		cerr << "only letters, numbers, underscore are allowed" << endl;
+		help();
 		return 1;
 	}
 	/* check user name, group name whether exist */
@@ -57,24 +53,27 @@ int main(int argc, char *argv[])
 		return 1;
 	/* read file from stdin, write its content to object */
 	file_name = uname + "-" + object_name;
-	file.open(file_name.c_str(), ios::out | ios::trunc);
-	while (cin.peek() != char_traits<char>::eof()) {
-		tmp = cin.get();
-		file << tmp;
-	}
-	file.close();
-	/* initiate corresponding acl object */
-	initial_acl = uname + "-" + object_name + "-acl";
-	file.open(initial_acl.c_str(), ios::out | ios::trunc);
-	file << uname << ".* rwxpv";
-	file.close();
-	/* record the information into user_object */
-	file2.open("user_object");
-	if (!file2) {
+	fout = fopen(file_name.c_str(), "w");
+	if (fout == NULL) {
 		cerr << "file can not open" << endl;
 		return 1;
 	}
+	while ((tmp = getchar()) != EOF)
+		fputc(tmp, fout);
+	fclose(fout);
+
+	/* initiate corresponding acl object */
+	initial_acl = uname + "-" + object_name + "-acl";
+	fout = fopen(initial_acl.c_str(), "w");
+	if (fout == NULL) {
+		cerr << "file can not open" << endl;
+		return 1;
+	}
+	fprintf(fout, "%s.* rwxpv", uname.c_str());
+	fclose(fout);
 	obj_user_group = object_name + " " + uname + " " + gname;
+	ifstream file2;
+	file2.open("user_object");
 	while (!file2.eof()) {
 		getline(file2, tmp_line);
 		if (tmp_line == obj_user_group)
@@ -82,12 +81,12 @@ int main(int argc, char *argv[])
 	}
 	file2.close();
 	if (flag == 0) {
-		file.open("user_object", ios::ate | ios::app);
-		if (!file)
+		fout = fopen("user_object", "w+");
+		if (!fout)
 			cerr << "file can not open" << endl;
 		else
-			file << object_name << " " << uname << " " << gname << '\n';
-		file.close();
+			fprintf(fout, "%s %s %s \n", object_name.c_str(), uname.c_str(), gname.c_str());
+		fclose(fout);
 	}
 	return 0;
 }

@@ -111,10 +111,9 @@ int main(int argc, char *argv[])
 					if (tmp.length() != 0)
 						cout << tmp <<endl;
 				}
-				file.close();
-				
+				file.close();				
 				delete[] input_command;
-				return 1;
+				return 0;
 			}
 		}
 		delete[] input_command;

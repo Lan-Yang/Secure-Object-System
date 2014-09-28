@@ -48,6 +48,8 @@ test:	build
 	@echo "------------"
 	./objget -u u1 -g g1 doc
 	@echo "------------"
+	-./objget -u u2 -g g1 u1+doc
+	@echo "------------"
 	-./objget -u u@ -g g1 doc
 	@echo "------------"
 	-./objget -u u1 -g g@ doc
@@ -56,15 +58,21 @@ test:	build
 	@echo "------------"
 	./objlist -u u1
 	@echo "------------"
-	./objgetacl -u u1 -g g1 doc
+	-./objgetacl -u u1 -g g1 doc
+	@echo "------------"
+	-./objgetacl -u u2 -g g1 u1+doc
 	@echo "------------"
 	./objtestacl -u u1 -g g3 -a r doc
 	@echo "------------"
 	./objtestacl -u u2 -g g1 -a r doc
 	@echo "------------"
-	./objtestacl -u u2 -g g1 -a r u1+doc
+	-./objtestacl -u u2 -g g1 -a r u1+doc
 	@echo "------------"
 	./objsetacl -u u1 -g g1 doc < newacl
+	@echo "------------"
+	-./objgetacl -u u1 -g g1 doc
+	@echo "------------"
+	-./objgetacl -u u2 -g g1 u1+doc
 	@echo "------------"
 	./objsetacl -u u2 -g g1 u1+doc < newacl
 

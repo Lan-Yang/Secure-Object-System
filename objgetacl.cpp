@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	string object_name; //object name
 	string acl_name;
 	string tmp;
-	char *acl_parse[3]; // user.group ops
+	char *acl_parse[3]; //user.group ops
 	char *object_name_parse[2];
 	vector<string> acl;	
 	ifstream file;

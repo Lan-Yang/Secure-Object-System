@@ -3,13 +3,17 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 	int ch;
+	int flag = 0;
 	opterr = 0;
 	string uname; //user name
 	string gname; //group name
 	string object_name; //object name
 	string initial_acl;
 	string file_name;
+	string obj_user_group;
+	string tmp_line;
 	ofstream file;
+	ifstream file2;
 	char tmp;
 	//input commands
 	while ((ch = getopt(argc, argv, "u:g:")) != -1) {
@@ -64,12 +68,26 @@ int main(int argc, char *argv[])
 	file << uname << ".* rwxpv";
 	file.close();
 	//record the information into user_object
-	file.open("user_object", ios::ate | ios::app);
-	if (!file)
+	file2.open("user_object");
+	if (!file2) {
 		cerr << "file can not open" << endl;
-	else
-		file << object_name << " " << uname << " " << gname << '\n';
-	file.close();
+		return 1;
+	}
+	obj_user_group = object_name + " " + uname + " " + gname;
+	while (!file2.eof()) {
+		getline(file2, tmp_line);
+		if (tmp_line == obj_user_group)
+			flag = 1;
+	}
+	file2.close();
+	if (flag == 0) {
+		file.open("user_object", ios::ate | ios::app);
+		if (!file)
+			cerr << "file can not open" << endl;
+		else
+			file << object_name << " " << uname << " " << gname << '\n';
+		file.close();
+	}
 	return 0;
 }
 

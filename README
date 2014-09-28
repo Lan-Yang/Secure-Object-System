@@ -1,4 +1,4 @@
-README by Lan Yang (uni: ly2331)
+README by Lan Yang
 
 Completed realization of six commands: objput, objget, objlist, objsetacl, 
 objgetacl and objtestacl.

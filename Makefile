@@ -43,10 +43,17 @@ function.o: functions.cpp header.h
 # Lines preceeded by @ aren't echoed before executing
 # Execution will stop if a program has a non-zero return code;
 # precede the line with a - to override that
-test:	build
-	./objput -u u1 -g g1 doc < testfile
+test:	build exec
 	@echo "------------"
-	./objget -u u1 -g g1 doc
+	-./objput -u u1 -g g1 doc < testfile
+	@echo "------------"
+	-./objput -u u1 -g g3 doc2 < testfile2
+	@echo "------------"
+	-./objput -u u2 -g g1 doc < testfile3
+	@echo "------------"
+	-./objget -u u1 -g g1 doc
+	@echo "------------"
+	-./objget -u u2 -g g1 doc
 	@echo "------------"
 	-./objget -u u2 -g g1 u1+doc
 	@echo "------------"
@@ -56,30 +63,46 @@ test:	build
 	@echo "------------"
 	-./objget -u u1 -g g@ do@
 	@echo "------------"
-	./objlist -u u1
+	-./objlist -u u1
 	@echo "------------"
 	-./objgetacl -u u1 -g g1 doc
 	@echo "------------"
+	-./objgetacl -u u2 -g g1 doc
+	@echo "------------"
 	-./objgetacl -u u2 -g g1 u1+doc
 	@echo "------------"
-	./objtestacl -u u1 -g g3 -a r doc
+	-./objtestacl -u u1 -g g3 -a r doc
 	@echo "------------"
-	./objtestacl -u u2 -g g1 -a r doc
+	-./objtestacl -u u2 -g g1 -a x doc
 	@echo "------------"
 	-./objtestacl -u u2 -g g1 -a r u1+doc
 	@echo "------------"
-	./objsetacl -u u1 -g g1 doc < newacl
+	-./objsetacl -u u1 -g g1 doc < newacl
 	@echo "------------"
 	-./objgetacl -u u1 -g g1 doc
 	@echo "------------"
 	-./objgetacl -u u2 -g g1 u1+doc
 	@echo "------------"
-	./objsetacl -u u2 -g g1 u1+doc < newacl
+	-./objsetacl -u u2 -g g1 u1+doc < newacl2
+	@echo "------------"
+	-./objgetacl -u u2 -g g1 u1+doc
+	@echo "------------"
+	cat u1-doc-acl
 
-
+.PHONY: exec
+ 
+ifneq "$(strip $(userfile))" ""
 exec: build
-	./sample $(ARG)
+	@echo init to $(userfile)
+	@cat $(userfile) > user_group
+else
+exec: build
+	@echo default_init
+	@echo "u1 g1 g3" > user_group
+	@echo "u2 g1 g4" >> user_group
+endif
 
+.PHONY: clean
 clean:
 	rm -f $(OBJ) *.core *.o *~ *.*~ .*~
 

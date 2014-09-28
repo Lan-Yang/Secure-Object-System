@@ -80,13 +80,18 @@ int main(int argc, char *argv[])
 			flag = 1;
 	}
 	file2.close();
+	ofstream file3;
 	if (flag == 0) {
-		fout = fopen("user_object", "w+");
-		if (!fout)
+		file3.open("user_object", ios::ate | ios::app);
+		if (!file3) {
 			cerr << "file can not open" << endl;
-		else
-			fprintf(fout, "%s %s %s \n", object_name.c_str(), uname.c_str(), gname.c_str());
-		fclose(fout);
+			return 1;
+		}
+		else {
+			file3 << object_name << " " << uname << " " 
+				<< gname << '\n';
+		}
+		file3.close();
 	}
 	return 0;
 }

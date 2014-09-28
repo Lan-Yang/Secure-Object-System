@@ -22,30 +22,30 @@ int main(int argc, char *argv[])
 			gname = optarg;
 			break;
 		default:
-			cout << "command not found" << endl;
-			return 0;
+			cerr << "command not found" << endl;
+			return 1;
 		}
 	}
 	//check commands
 	if ((gname.empty()) || (uname.empty()) || (argc != 6)) {
-		cout << "command not found" << endl;
-		return 0;
+		cerr << "command not found" << endl;
+		return 1;
 	}
 	object_name = argv[5];
 	//check user name, group name whether valid
 	if (!check_name_valid(uname)) {
-		cout << "user name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" << endl;
-		return 0;
+		cerr << "user name not valid" << endl;
+		cerr << "only letters, numbers, underscore are allowed" << endl;
+		return 1;
 	}
 	if (!check_name_valid(gname)) {
-		cout << "group name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" << endl;
-		return 0;
+		cerr << "group name not valid" << endl;
+		cerr << "only letters, numbers, underscore are allowed" << endl;
+		return 1;
 	}
 	//check user name, group name whether exist
 	if (!check_user_group(uname, gname))
-		return 0;
+		return 1;
 	//check the condition that one references other users' objects
 	if (check_reference(object_name)) {
 		char *input_command = new char[object_name.length() + 1];
@@ -58,14 +58,14 @@ int main(int argc, char *argv[])
 		acl_name = uname + "-" + object_name + "-acl";
 	}
 	if (uname == uname2) {
-		cout << "command not found" << endl;
-		return 0;
+		cerr << "command not found" << endl;
+		return 1;
 	}
 	//check object name whether valid
 	if (!check_name_valid(object_name)) {
-		cout << "object name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" << endl;
-		return 0;
+		cerr << "object name not valid" << endl;
+		cerr << "only letters, numbers, underscore are allowed" << endl;
+		return 1;
 	}
 	cout << acl_name << endl;
 	cout << object_name << endl;
@@ -73,15 +73,15 @@ int main(int argc, char *argv[])
 
 	//check user whether have "p" permission to acl
 	if (!check_acl(acl_name, uname, gname, "p")) {
-		cout << "no permission to change acl" << endl;
-		return 0;
+		cerr << "no permission to change acl" << endl;
+		return 1;
 	}
 	cout << "hi" << endl;
 	//read file from stdin, write its content to object
 	file.open(acl_name.c_str());
 	if (!file) {
-		cout << "file can not open" << endl;
-		return 0;
+		cerr << "file can not open" << endl;
+		return 1;
 	}
 
 	while (cin.peek() != char_traits<char>::eof()) {

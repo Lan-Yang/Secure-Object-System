@@ -21,35 +21,35 @@ int main(int argc, char *argv[])
 			gname = optarg;
 			break;
 		default:
-			cout << "command not found" << endl;
-			return 0;
+			cerr << "command not found" << endl;
+			return 1;
 		}
 	}
 	//check commands
 	if ((gname.empty()) || (uname.empty()) || (argc != 6)) {
-		cout << "command not found" << endl;
-		return 0;
+		cerr << "command not found" << endl;
+		return 1;
 	}
 	object_name = argv[5];
 	//check user name, group name, object name whether valid
 	if (!check_name_valid(uname)) {
-		cout << "user name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" << endl;
-		return 0;
+		cerr << "user name not valid" << endl;
+		cerr << "only letters, numbers, underscore are allowed" << endl;
+		return 1;
 	}
 	if (!check_name_valid(gname)) {
-		cout << "group name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" << endl;
-		return 0;
+		cerr << "group name not valid" << endl;
+		cerr << "only letters, numbers, underscore are allowed" << endl;
+		return 1;
 	}
 	if (!check_name_valid(object_name)) {
-		cout << "object name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" << endl;
-		return 0;
+		cerr << "object name not valid" << endl;
+		cerr << "only letters, numbers, underscore are allowed" << endl;
+		return 1;
 	}
 	//check user name, group name whether exist
 	if (!check_user_group(uname, gname))
-		return 0;
+		return 1;
 	//read file from stdin, write its content to object
 	file_name = uname + "-" + object_name;
 	file.open(file_name.c_str(), ios::out | ios::trunc);
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	//record the information into user_object
 	file.open("user_object", ios::ate | ios::app);
 	if (!file)
-		cout << "file can not open" << endl;
+		cerr << "file can not open" << endl;
 	else
 		file << object_name << " " << uname << " " << gname << '\n';
 	file.close();

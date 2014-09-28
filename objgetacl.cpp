@@ -27,29 +27,29 @@ int main(int argc, char *argv[])
 			gname = optarg;
 			break;
 		default:
-			cout << "command not found" << endl;
-			return 0;
+			cerr << "command not found" << endl;
+			return 1;
 		}
 	}
 	if ((gname.empty()) || (uname.empty()) || (argc != 6)) {
-		cout << "command not found" << endl;
-		return 0;
+		cerr << "command not found" << endl;
+		return 1;
 	}
 	object_name = argv[5];
 	//check user name, group name whether valid
 	if (!check_name_valid(uname)) {
-		cout << "user name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" << endl;
-		return 0;
+		cerr << "user name not valid" << endl;
+		cerr << "only letters, numbers, underscore are allowed" << endl;
+		return 1;
 	}
 	if (!check_name_valid(gname)) {
-		cout << "group name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" << endl;
-		return 0;
+		cerr << "group name not valid" << endl;
+		cerr << "only letters, numbers, underscore are allowed" << endl;
+		return 1;
 	}
 	//check username, groupname whether exist
 	if (!check_user_group(uname, gname))
-		return 0;
+		return 1;
 	//check the condition that one references other users' objects
 	if (check_reference(object_name)) {
 		char *input_command = new char[object_name.length() + 1];
@@ -62,20 +62,20 @@ int main(int argc, char *argv[])
 		acl_name = uname + "-" + object_name + "-acl";
 	}
 	if (uname == uname2) {
-		cout << "command not found" << endl;
-		return 0;
+		cerr << "command not found" << endl;
+		return 1;
 	}
 	//check object name whether valid
 	if (!check_name_valid(object_name)) {
-		cout << "object name not valid" << endl;
-		cout << "only letters, numbers, underscore are allowed" << endl;
-		return 0;
+		cerr << "object name not valid" << endl;
+		cerr << "only letters, numbers, underscore are allowed" << endl;
+		return 1;
 	}
 	//check user whether have permission to view acl
 	file.open(acl_name.c_str());
 	if (!file) {
-		cout << "file can not open" << endl;
-		return 0;
+		cerr << "file can not open" << endl;
+		return 1;
 	}
 	while (!file.eof()) {
 		getline(file, tmp);
@@ -94,9 +94,9 @@ int main(int argc, char *argv[])
 		                ((acl_parse[1] == gname) ||
 		                 (strcmp(acl_parse[1], "*") == 0))) {
 			if (acl_parse[2] == NULL) {
-				cout << "no permission to view acl" << endl;
+				cerr << "no permission to view acl" << endl;
 				delete[] input_command;
-				return 0;
+				return 1;
 			}
 			tmp = acl_parse[2];
 			if (tmp.find("v") != string::npos) {
@@ -107,8 +107,10 @@ int main(int argc, char *argv[])
 		}
 		delete[] input_command;
 	}
-	if (i == acl.size())
-		cout << "user has no permission to view acl" << endl;
+	if (i == acl.size()) {
+		cerr << "user has no permission to view acl" << endl;
+		return 1;
+	}
 	return 0;
 }
 

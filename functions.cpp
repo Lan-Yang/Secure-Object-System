@@ -39,7 +39,7 @@ bool check_user_group(string uname, string gname)
 	ifstream file;
 	file.open("user_group");
 	if (!file) {
-		cout << "file can not open" << endl;
+		cerr << "file can not open" << endl;
 		return false;
 	}
 	while (!file.eof()) {
@@ -58,7 +58,7 @@ bool check_user_group(string uname, string gname)
 				j++;
 			}
 			if (user_group_parse[j] == NULL) {
-				cout << "user does not match the group" << endl;
+				cerr << "user does not match the group" << endl;
 				return false;
 			}
 			delete[] input_command;
@@ -67,7 +67,7 @@ bool check_user_group(string uname, string gname)
 		delete[] input_command;
 	}
 	if (i == usergroup.size()) {
-		cout << "user does not exist" << endl;
+		cerr << "user does not exist" << endl;
 		return false;
 	}
 	return true;
@@ -95,7 +95,7 @@ bool check_acl(string acl_name, string uname, string gname, string per)
 	ifstream file;
 	file.open(acl_name.c_str());
 	if (!file) {
-		cout << "file can not open" << endl;
+		cerr << "file can not open" << endl;
 		return false;
 	}
 	while (!file.eof()) {

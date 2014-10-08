@@ -2,11 +2,12 @@
 
 int main(int argc, char *argv[])
 {
-	int ch;
 	int flag = 0;
 	opterr = 0;
-	string uname; /* user name */
-	string gname; /* group name */
+	uid_t user_id;
+	string uname; /* to trans int to string */
+	gid_t group_id;
+	string gname; /* to trans int to string */
 	string object_name; /* object name */
 	string initial_acl;
 	string file_name;
@@ -16,42 +17,22 @@ int main(int argc, char *argv[])
 	char tmp;
 
 	/* input commands */
-	while ((ch = getopt(argc, argv, "u:g:")) != -1) {
-		switch (ch) {
-		case 'u':
-			uname = optarg;
-			break;
-		case 'g':
-			gname = optarg;
-			break;
-		default:
-			cerr << "command not found" << endl;
-			return 1;
-		}
-	}
+	user_id = getuid();
+	group_id = getgid();
 	/* check commands */
-	if ((gname.empty()) || (uname.empty()) || (argc != 6)) {
+	if (argc != 2) {
 		cerr << "command not found" << endl;
 		return 1;
 	}
-	object_name = argv[5];
-	/* check user name, group name, object name whether valid */
-	if (!check_name_valid(uname)) {
-		help();
-		return 1;
-	}
-	if (!check_name_valid(gname)) {
-		help();
-		return 1;
-	}
+	object_name = argv[1];
+	/* check object name whether valid */
 	if (!check_name_valid(object_name)) {
 		help();
 		return 1;
 	}
-	/* check user name, group name whether exist */
-	if (!check_user_group(uname, gname))
-		return 1;
 	/* read file from stdin, write its content to object */
+	uname = to_string(user_id);
+	gname = to_string(group_id);
 	file_name = uname + "-" + object_name;
 	fout = fopen(file_name.c_str(), "w");
 	if (fout == NULL) {

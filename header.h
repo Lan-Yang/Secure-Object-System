@@ -5,6 +5,9 @@
 #include <cstring>
 #include <vector>
 #include <cstdlib>
+#include <sys/types.h>
+#include <stdbool.h>
+
 
 using namespace std;
 

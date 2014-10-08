@@ -3,6 +3,10 @@
 # List the object files in one place
 OBJ=objgetacl objput objget objlist objsetacl objtestacl
 
+#options
+CXXFLAGS=-c -Wall -Werror -std=c++0x
+#LDFLAGS=
+
 # The first target is the default if you just say "make".  In this
 # case, "build" relies on "sample", because I want the executable to be
 # called "sample"
@@ -13,32 +17,20 @@ build:	$(OBJ)
 # "sample" requires a set of object files
 # $@ is a special variable: the target of the operation, in this case sample
 # $? is the
-objgetacl: objgetacl.o functions.o
-	g++ objgetacl.o functions.o -o objgetacl
-objgetacl.o: objgetacl.cpp header.h
-	g++ -Wall -c -o objgetacl.o objgetacl.cpp 
+.o: .cpp header.h
+	g++ $(CXXFLAGS) -o $@ $?
+objgetacl: objgetacl.o functions.o 
+	g++ objgetacl.o functions.o -o $@
 objput: objput.o functions.o
-	g++ objput.o functions.o -o objput
-objput.o: objput.cpp header.h
-	g++ -Wall -c -o objput.o objput.cpp 
+	g++ objput.o functions.o -o $@ 
 objget: objget.o functions.o
-	g++ objget.o functions.o -o objget
-objget.o: objget.cpp header.h
-	g++ -Wall -c -o objget.o objget.cpp
+	g++ objget.o functions.o -o $@
 objlist: objlist.o functions.o
-	g++ objlist.o functions.o -o objlist
-objlist.o: objlist.cpp header.h
-	g++ -Wall -c -o objlist.o objlist.cpp 
+	g++ objlist.o functions.o -o $@
 objsetacl: objsetacl.o functions.o
-	g++ objsetacl.o functions.o -o objsetacl
-objsetacl.o: objsetacl.cpp header.h
-	g++ -Wall -c -o objsetacl.o objsetacl.cpp 
+	g++ objsetacl.o functions.o -o $@ 
 objtestacl: objtestacl.o functions.o
-	g++ objtestacl.o functions.o -o objtestacl
-objtestacl.o: objtestacl.cpp header.h
-	g++ -Wall -c -o objtestacl.o objtestacl.cpp 
-function.o: functions.cpp header.h
-	g++ -Wall -c -o functions.o functions.cpp
+	g++ objtestacl.o functions.o -o $@
 # Before testing, we must compile.  
 # Lines preceeded by @ aren't echoed before executing
 # Execution will stop if a program has a non-zero return code;

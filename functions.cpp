@@ -26,7 +26,7 @@ bool check_name_valid(const string &input)
 int parse_command(const string &input, vector<string> &commands)
 {
 	commands.clear();
-	int i = 0;
+	unsigned int i = 0;
 	const char token[] = " .\t+";
 	size_t LL = input.size();
 	char *buf = new char[LL + 1];
@@ -42,15 +42,14 @@ int parse_command(const string &input, vector<string> &commands)
 		commands.push_back(string(tmp));
 		tmp = strtok_r(NULL, token, &saveptr);
 	}
-
 	delete [] buf;
-	return i;
+	return 0;
 }
 
 bool check_user_group(const string &uname, const string &gname)
 {
 	string tmp;
-	int i, j = 1;
+	unsigned int i, j = 1;
 	vector<string> usergroup;
 	vector<string> user_group_parse; /* a user can at most in 10 groups */
 	ifstream file;
@@ -96,7 +95,7 @@ bool check_reference(const string &input)
 bool check_acl(const string &acl_name, const string &uname, const string &gname,
                const string &per)
 {
-	int i;
+	unsigned int i;
 	string tmp;
 	vector<string> acl;
 	vector<string> acl_parse; /* user.group ops */

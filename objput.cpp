@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
 	}
 	fprintf(fout, "%s.* rwxpv", uname.c_str());
 	fclose(fout);
+	/* record to the user object file */
 	obj_user_group = object_name + " " + uname + " " + gname;
 	ifstream file2;
 	file2.open("user_object");

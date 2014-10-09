@@ -4,8 +4,10 @@ int main(int argc, char *argv[])
 {
 	int ch;
 	opterr = 0;
+	uid_t user_id;
 	string uname; /* user name */
 	string uname2;
+	gid_t group_id;
 	string gname; /* group name */
 	string access;
 	string object_name; /* object name */
@@ -13,14 +15,8 @@ int main(int argc, char *argv[])
 	vector<string> object_name_parse;
 
 	/* input commands */
-	while ((ch = getopt(argc, argv, "u:g:a:")) != -1) {
+	while ((ch = getopt(argc, argv, "a:")) != -1) {
 		switch (ch) {
-		case 'u':
-			uname = optarg;
-			break;
-		case 'g':
-			gname = optarg;
-			break;
 		case 'a':
 			access = optarg;
 			break;
@@ -30,26 +26,22 @@ int main(int argc, char *argv[])
 		}
 	}
 	/* check commands */
-	if ((gname.empty()) || (uname.empty()) || (argc != 8)) {
+	if (argc != 4) {
 		cerr << "command not found" << endl;
 		return 1;
 	}
-	object_name = argv[7];
-	/* check user name, group name whether valid */
-	if (!check_name_valid(uname)) {
-		help();
-		return 1;
-	}
-	if (!check_name_valid(gname)) {
-		help();
-		return 1;
-	}
+	object_name = argv[3];
+	user_id = getuid();
+	group_id = getgid();
+	uname = to_string(user_id);
+	gname = to_string(group_id);
 	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
 		parse_command(object_name, object_name_parse);
 		uname2 = object_name_parse[0];
 		object_name = object_name_parse[1];
 		acl_name = uname2 + "-" + object_name + "-acl";
+		/* check referenced user name whether valid?? */
 	} else {
 		acl_name = uname + "-" + object_name + "-acl";
 	}
@@ -62,9 +54,6 @@ int main(int argc, char *argv[])
 		help();
 		return 1;
 	}
-	/* check user name, group name whether exist */
-	if (!check_user_group(uname, gname))
-		return 1;
 	/* check allowed or denied */
 	if (!check_acl(acl_name, uname, gname, access))
 		cerr << "denied" << endl;

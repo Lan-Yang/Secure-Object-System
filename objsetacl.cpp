@@ -3,10 +3,8 @@
 int main(int argc, char *argv[])
 {
 	opterr = 0;
-	uid_t user_id;
 	string uname; /* user name */
 	string uname2;
-	gid_t group_id;
 	string gname; /* group name */
 	string object_name; /* object name */
 	string acl_file_name;
@@ -14,11 +12,18 @@ int main(int argc, char *argv[])
 	FILE *fout;
 	ofstream file;
 	char tmp;
+	struct passwd *tmp1 = NULL;
+	struct group *tmp2 = NULL;
 
-	user_id = getuid();
-	group_id = getgid();
-	uname = to_string(user_id);
-	gname = to_string(group_id);
+	tmp1 = getpwuid(getuid());
+	tmp2 = getgrgid(getgid());
+	if(tmp1 == NULL||tmp2 == NULL){
+		cerr<<"error"<<endl;
+		return 1;	
+	}else {
+		uname = tmp1 -> pw_name;
+		gname = tmp2 -> gr_name;
+	}
 	/* check commands */
 	if (argc != 2) {
 		cerr << "command not found" << endl;

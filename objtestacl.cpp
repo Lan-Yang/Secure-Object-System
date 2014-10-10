@@ -4,15 +4,15 @@ int main(int argc, char *argv[])
 {
 	int ch;
 	opterr = 0;
-	uid_t user_id;
 	string uname; /* user name */
 	string uname2;
-	gid_t group_id;
 	string gname; /* group name */
 	string access;
 	string object_name; /* object name */
 	string acl_name;
 	vector<string> object_name_parse;
+	struct passwd *tmp1 = NULL;
+	struct group *tmp2 = NULL;
 
 	/* input commands */
 	while ((ch = getopt(argc, argv, "a:")) != -1) {
@@ -31,10 +31,15 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	object_name = argv[3];
-	user_id = getuid();
-	group_id = getgid();
-	uname = to_string(user_id);
-	gname = to_string(group_id);
+	tmp1 = getpwuid(getuid());
+	tmp2 = getgrgid(getgid());
+	if(tmp1 == NULL||tmp2 == NULL){
+		cerr<<"error"<<endl;
+		return 1;	
+	}else {
+		uname = tmp1 -> pw_name;
+		gname = tmp2 -> gr_name;
+	}
 	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
 		parse_command(object_name, object_name_parse);

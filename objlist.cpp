@@ -6,16 +6,16 @@ int main(int argc, char *argv[])
 	size_t i;
 	int flag = 0; /* mark whether with "-l" */
 	opterr = 0;
-	uid_t user_id;
 	string uname; /* user name */
 	string file_name; /* file name */
-	string tmp;
 	vector<string> user_object_parse;
 	vector<string> user_group_parse; /* a user can at most in 10 groups */
 	vector<string> usergroup;
 	vector<string> userobject;
 	vector<string> objlist;
 	ifstream file;
+	string tmp;
+	struct passwd *tmp1 = NULL;
 
 	/* input commands */
 	while ((ch = getopt(argc, argv, "l")) != -1) {
@@ -32,8 +32,13 @@ int main(int argc, char *argv[])
 		cerr << "command not found" << endl;
 		return 1;
 	}
-	user_id = getuid();
-	uname = to_string(user_id);
+	tmp1 = getpwuid(getuid());
+	if(tmp1 == NULL){
+		cerr<<"error"<<endl;
+		return 1;	
+	}else {
+		uname = tmp1 -> pw_name;
+	}
 	/* check if the user has the privilege to access this file */
 	file.open("user_object");
 	if (!file) {

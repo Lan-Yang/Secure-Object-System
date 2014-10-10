@@ -4,9 +4,7 @@ int main(int argc, char *argv[])
 {
 	int flag = 0;
 	opterr = 0;
-	uid_t user_id;
 	string uname; /* to trans int to string */
-	gid_t group_id;
 	string gname; /* to trans int to string */
 	string object_name; /* object name */
 	string initial_acl;
@@ -15,10 +13,19 @@ int main(int argc, char *argv[])
 	string tmp_line;
 	FILE *fout;
 	char tmp;
+	struct passwd *tmp1 = NULL;
+	struct group *tmp2 = NULL;
 
 	/* input commands */
-	user_id = getuid();
-	group_id = getgid();
+	tmp1 = getpwuid(getuid());
+	tmp2 = getgrgid(getgid());
+	if(tmp1 == NULL||tmp2 == NULL){
+		cerr<<"error"<<endl;
+		return 1;	
+	}else {
+		uname = tmp1 -> pw_name;
+		gname = tmp2 -> gr_name;
+	}
 	/* check commands */
 	if (argc != 2) {
 		cerr << "command not found" << endl;
@@ -31,8 +38,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	/* read file from stdin, write its content to object */
-	uname = to_string(user_id);
-	gname = to_string(group_id);
 	file_name = uname + "-" + object_name;
 	fout = fopen(file_name.c_str(), "w");
 	if (fout == NULL) {

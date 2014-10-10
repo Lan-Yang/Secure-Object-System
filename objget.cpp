@@ -3,10 +3,8 @@
 int main(int argc, char *argv[])
 {
 	opterr = 0;
-	uid_t user_id;
 	string uname; 
 	string uname2; /* referenced user name */
-	gid_t group_id;
 	string gname; /* group name */
 	string object_name;
 	string file_name;
@@ -17,6 +15,8 @@ int main(int argc, char *argv[])
 	vector<string> acl;
 	vector<string> object_name_parse;
 	ifstream file;
+	struct passwd *tmp1 = NULL;
+	struct group *tmp2 = NULL;
 
 	/* input commands */
 	if (argc != 2) {
@@ -24,10 +24,15 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	object_name = argv[1];
-	user_id = getuid();
-	uname = to_string(user_id);
-	group_id = getgid();
-	gname = to_string(group_id);
+	tmp1 = getpwuid(getuid());
+	tmp2 = getgrgid(getgid());
+	if(tmp1 == NULL||tmp2 == NULL){
+		cerr<<"error"<<endl;
+		return 1;	
+	}else {
+		uname = tmp1 -> pw_name;
+		gname = tmp2 -> gr_name;
+	}
 	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
 		parse_command(object_name, object_name_parse);

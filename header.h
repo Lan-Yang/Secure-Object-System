@@ -7,7 +7,9 @@
 #include <cstdlib>
 #include <sys/types.h>
 #include <stdbool.h>
-
+#include <pwd.h>
+#include <sys/types.h>
+#include <grp.h>
 
 using namespace std;
 

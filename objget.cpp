@@ -38,10 +38,10 @@ int main(int argc, char *argv[])
 		parse_command(object_name, object_name_parse);
 		uname2 = object_name_parse[0];
 		object_name = object_name_parse[1];
-		file_name = uname2 + "-" + object_name;
+		file_name = "./lanyang/" + uname2 + "-" + object_name;
 	/* check referenced user name whether valid?? */
 	} else {
-		file_name = uname + "-" + object_name;
+		file_name = "./lanyang/" + uname + "-" + object_name;
 	}
 	/* check object name whether valid */
 	if (!check_name_valid(object_name)) {

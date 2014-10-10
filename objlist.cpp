@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	/* if the user has an object list, then print it */
 	for (i = 0; i < objlist.size(); i++) {
 		if (flag == 1) {
-			file_name = uname + "-" + objlist[i];
+			file_name = "./lanyang/" + uname + "-" + objlist[i];
 			file.open(file_name.c_str(), ios::ate | ios::binary);
 			if (!file) {
 				cerr << "file can not open" << endl;

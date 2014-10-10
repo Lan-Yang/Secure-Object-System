@@ -35,10 +35,10 @@ int main(int argc, char *argv[])
 		parse_command(object_name, object_name_parse);
 		uname2 = object_name_parse[0];
 		object_name = object_name_parse[1];
-		acl_file_name = uname2 + "-" + object_name + "-acl";
+		acl_file_name = "./lanyang/" + uname2 + "-" + object_name + "-acl";
 		/* check referenced user name whether valid?? */
 	} else {
-		acl_file_name = uname + "-" + object_name + "-acl";
+		acl_file_name = "./lanyang/" + uname + "-" + object_name + "-acl";
 	}
 	if (uname == uname2) {
 		cerr << "command not found" << endl;

@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	/* read file from stdin, write its content to object */
-	file_name = uname + "-" + object_name;
+	file_name = "./lanyang/" + uname + "-" + object_name;
 	fout = fopen(file_name.c_str(), "w");
 	if (fout == NULL) {
 		cerr << "file can not open" << endl;
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	fclose(fout);
 
 	/* initiate corresponding acl object */
-	initial_acl = uname + "-" + object_name + "-acl";
+	initial_acl = "./lanyang/" + uname + "-" + object_name + "-acl";
 	fout = fopen(initial_acl.c_str(), "w");
 	if (fout == NULL) {
 		cerr << "file can not open" << endl;

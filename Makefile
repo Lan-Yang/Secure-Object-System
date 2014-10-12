@@ -12,7 +12,7 @@ CXXFLAGS=-c -Wall -Werror -std=c++0x
 # called "sample"
 
 build:	$(OBJ)
-	@cat /dev/null > user_object
+	@cat /dev/null > userfile.txt
 
 # "sample" requires a set of object files
 # $@ is a special variable: the target of the operation, in this case sample
@@ -37,66 +37,75 @@ objtestacl: objtestacl.o functions.o
 # precede the line with a - to override that
 test:	build exec
 	@echo "------------"
-	-./objput -u u1 -g g1 doc < testfile
+	-su u1 -c "./objput doc < testfile"
 	@echo "------------"
-	-./objput -u u1 -g g3 doc2 < testfile2
+	-su u1 -c "./objput doc2 < testfile2"
 	@echo "------------"
-	-./objput -u u2 -g g1 doc < testfile3
+	-su u2 -c "./objput doc < testfile3"
 	@echo "------------"
-	-./objget -u u1 -g g1 doc
+	-su u1 -c "./objget doc"
 	@echo "------------"
-	-./objget -u u2 -g g1 doc
+	-su u2 -c "./objget doc"
 	@echo "------------"
-	-./objget -u u2 -g g1 u1+doc
+	-su u2 -c "./objget u1+doc"
 	@echo "------------"
-	-./objget -u u@ -g g1 doc
+	-su u1 -c "./objget do@"
 	@echo "------------"
-	-./objget -u u1 -g g@ doc
+	-su u1 -c "./objlist"
 	@echo "------------"
-	-./objget -u u1 -g g@ do@
+	-su u1 -c "./objlist -l"
 	@echo "------------"
-	-./objlist -u u1
+	-su u1 -c "./objgetacl doc"
 	@echo "------------"
-	-./objlist -u u1 -l
+	-su u2 -c "./objgetacl doc"
 	@echo "------------"
-	-./objgetacl -u u1 -g g1 doc
+	-su u2 -c "./objgetacl u1+doc"
 	@echo "------------"
-	-./objgetacl -u u2 -g g1 doc
+	-su u1 -c "./objtestacl -a r doc"
 	@echo "------------"
-	-./objgetacl -u u2 -g g1 u1+doc
+	-su u1 -c "./objtestacl -a x doc"
 	@echo "------------"
-	-./objtestacl -u u1 -g g3 -a r doc
+	-su u2 -c "./objtestacl -a r u1+doc"
 	@echo "------------"
-	-./objtestacl -u u2 -g g1 -a x doc
+	-su u1 -c "./objsetacl doc < newacl"
 	@echo "------------"
-	-./objtestacl -u u2 -g g1 -a r u1+doc
+	-su u1 -c "./objgetacl doc"
 	@echo "------------"
-	-./objsetacl -u u1 -g g1 doc < newacl
+	-su u2 -c "./objgetacl u1+doc"
 	@echo "------------"
-	-./objgetacl -u u1 -g g1 doc
+	-su u2 -c "./objsetacl u1+doc < newacl2"
 	@echo "------------"
-	-./objgetacl -u u2 -g g1 u1+doc
-	@echo "------------"
-	-./objsetacl -u u2 -g g1 u1+doc < newacl2
-	@echo "------------"
-	-./objgetacl -u u2 -g g1 u1+doc
-	@echo "------------"
-	cat u1-doc-acl
-
+	-su u2 -c "./objgetacl u1+doc"
+	
 .PHONY: exec
- 
+
+ exec: build
+	@chmod +x precommands.sh
+	@chmod +x readfile.sh
+	@./precommands.sh
+	@chown ly2331 $(OBJ)
+	@chgrp ly2331 $(OBJ)
+	@chmod 701 $(OBJ)
+	@chmod u+s $(OBJ)
+	@touch lanyang/user_object
+	@chown ly2331 lanyang/user_object
+	@chgrp ly2331 lanyang/user_object
+	@chmod 700 lanyang/user_object
 ifneq "$(strip $(userfile))" ""
-exec: build
 	@echo init to $(userfile)
-	@cat $(userfile) > user_group
+	@cat $(userfile) > userfile.txt
 else
-exec: build
 	@echo default_init
-	@echo "u1 g1 g3" > user_group
-	@echo "u2 g1 g4" >> user_group
+	@echo "u1 g1 g3" > userfile.txt
+	@echo "u2 g1 g4" >> userfile.txt
 endif
+	@chown ly2331 userfile.txt
+	@chgrp ly2331 userfile.txt
+	@chmod 400 userfile.txt
+	@./readfile.sh userfile.txt
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) *.core *.o *~ *.*~ .*~ *-*
+	rm -f $(OBJ) *.core *.o *~ *.*~ .*~ lanyang/*-* lanyang/*_*
+	rmdir lanyang
 

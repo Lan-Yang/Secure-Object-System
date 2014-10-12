@@ -1,18 +1,94 @@
 README by Lan Yang (uni: ly2331)
-
+hmwk1:
 Completed realization of six commands: objput, objget, objlist, objsetacl, 
 objgetacl and objtestacl.
 For each command, permission checking includes the following steps.
 1.	check input command's number of arguments whether right.
 2.	check user namer, group name whether legal.
-3.	check object name whether includes "+" to handle the situation that one 
-	may references others users' objects.
+3.	check object name whether includes "+" to handle the situation
+	that one may references others users' objects.
 4.	check object name whether legal.
-5.	check user_group to see whether user exists and belongs to the group.
+5.	check user_group to see whether user exists and belongs to the
+	group.
 6.	check user_object to see whether user has this object.
-7.	check the corresponding acl to make sure whether user has permission.
-The object size is unlimited, but I put a limit in user and group information, 
+7.	check the corresponding acl to make sure whether user has 
+	permission.
+The object size is unlimited, but I put a limit in user and group 
+information, 
 that is each user belongs to no more than ten groups.
 I stored the list of legal user and group names in user_group, and the list of 
-legal user and object names in user_object. When a new object was created by 
+legal user and object names in user_object. When a new object was 
+created by 
 some user, I created an initial ACL and added a record to user_object.
+
+hmwk2:
+For this homework, programs use the actual user and group ID
+by functions like getuid() and getgroups(). And the initial user
+and group information is in userfile which is userfile.txt in my 
+programs. 
+For each command, permission checking includes the following steps.
+1.	check input command's number of arguments whether right.
+2.	check object name whether includes "+" to handle the situation
+	that one may references others users' objects.
+3.	check object name whether legal.
+4.	check userfile to see whether user exists and belongs to the
+	group.
+5.	check user_object to see whether user has this object.
+6.	check the corresponding acl to make sure whether user has 
+	permission.
+
+To ensure security, I set up permissions as follows.
+1.	I chose a non-privileged UID for the repository. The username
+	of the uid is ly2331. Its group is ly2331. Both the owner and 
+	group of the repository are ly2331. The mode of the repository
+	is 700. So that other users except root cannot access the
+	repository and objects in the repository by running direct
+	shell commands like "cat", "vim", "cd", etc.
+2.	I changed the owner and group of the six executables to ly2331. 
+	And I used setuid to change their modes, so that objects
+	of the repository can only be accessed by other users except 
+	root through my ACLs. 
+	Because setuid gives other user the permission as the owner 
+	when executing my programs, it is very important to change the 
+	six programs' owner to a non-privileged one instead of root.
+	Besides, I changed modes of the six programs to be 701 for
+	security.
+3.	I stored objects created and used by the executables, such as 
+	doc in the repository. ACL objects are also put into the 
+	repository, so that they cannot be accessed unless executing my 
+	programs, whose results are under control by my ACLs. There is 
+	a special object named user_object which has information of 
+	users and related objects. It's also stored in the repository.
+4.	For other files such as .cpp file and userfile.txt, they are
+	stored outside the repository. The mode of userfile is set to 
+	be 400, and its owner is ly2331. It can only be read by the 
+	owner or the root or by executing my programs.
+5.	I added users and groups according to the information in the
+	user file. 
+
+Justification of using non-privileged UID
+1.	This design satisfies the requirement for confidentiality.
+	Just as what I've mentioned above, any access to the repository
+	that bypasses the ACLs is prevented.
+2.	This design satisfies the requirement for integrity.
+	Other users have no write or read permissions to the six 
+	executes. It ensures the programs cannot be modified or 
+	disassemblied.
+3.	This design satisfies the requirement for availability.
+	By executing my programs and checking ACLs, other users can 
+	access the repository. 
+Since the non-privileged UID can satisfy the needs for a secure system,
+it is not necessary to set root as the repository's owner. Furthermore,
+the second choice may result in dangers. After setting setUID, the user 
+can have the same permission as the owner when executing, users may do 
+some malicious manipulation as root to other programs or processes in 
+the system, such as accessing secret information.
+
+	
+
+
+
+	
+
+ 
+

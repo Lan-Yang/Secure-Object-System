@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
 	while ((tmp = getchar()) != EOF)
 		fputc(tmp, fout);
 	fclose(fout);
-
 	/* initiate corresponding acl object */
 	initial_acl = "./lanyang/" + uname + "-" + object_name + "-acl";
 	fout = fopen(initial_acl.c_str(), "w");
@@ -60,7 +59,7 @@ int main(int argc, char *argv[])
 	/* record to the user object file */
 	obj_user_group = object_name + " " + uname + " " + gname;
 	ifstream file2;
-	file2.open("user_object");
+	file2.open("./lanyang/user_object");
 	while (!file2.eof()) {
 		getline(file2, tmp_line);
 		if (tmp_line == obj_user_group)
@@ -69,7 +68,7 @@ int main(int argc, char *argv[])
 	file2.close();
 	ofstream file3;
 	if (flag == 0) {
-		file3.open("user_object", ios::ate | ios::app);
+		file3.open("./lanyang/user_object", ios::ate | ios::app);
 		if (!file3) {
 			cerr << "file can not open" << endl;
 			return 1;

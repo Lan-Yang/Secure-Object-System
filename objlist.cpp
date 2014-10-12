@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 		uname = tmp1 -> pw_name;
 	}
 	/* check if the user has the privilege to access this file */
-	file.open("user_object");
+	file.open("lanyang/user_object");
 	if (!file) {
 		cerr << "file can not open" << endl;
 		return 1;

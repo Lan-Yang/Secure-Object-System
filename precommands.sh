@@ -1,7 +1,7 @@
 #! /bin/bash
 # Set up an empty repository to store objects
 # The owner of the repository is a unprivileged one
-chmod u+s objput objget objlist objgetacl objsetacl objtestacl
+userdel ly2331
 useradd ly2331
 echo ly2331:ly2331 | chpasswd
 mkdir lanyang

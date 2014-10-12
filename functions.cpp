@@ -54,7 +54,7 @@ bool check_user_group(const string &uname, const string &gname)
 	vector<string> user_group_parse; /* a user can at most in 10 groups */
 	ifstream file;
 
-	file.open("user_group");
+	file.open("userfile.txt");
 	if (!file) {
 		cerr << "file can not open" << endl;
 		return false;

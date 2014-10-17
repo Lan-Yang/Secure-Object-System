@@ -76,6 +76,8 @@ test:	build exec
 	-su u2 -c "./objsetacl u1+doc < newacl2"
 	@echo "------------"
 	-su u2 -c "./objgetacl u1+doc"
+	@echo "------------"
+	-su u1 -c "./objput doc < testfile"
 	
 .PHONY: exec
 

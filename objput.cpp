@@ -39,6 +39,17 @@ int main(int argc, char *argv[])
 	}
 	/* read file from stdin, write its content to object */
 	file_name = "./lanyang/" + uname + "-" + object_name;
+	/* check the object whether already exist */
+	initial_acl = "./lanyang/" + uname + "-" + object_name + "-acl";
+	fout = fopen(initial_acl.c_str(), "r");
+	if (fout != NULL) {
+	/* if it exists, check acl "w" */
+		if (!check_acl(initial_acl, uname, gname, "w")) {
+			cerr << "object exists. no permission to write" << endl;
+			return 1;
+		}
+	}
+	/* if user has permission to write */
 	fout = fopen(file_name.c_str(), "w");
 	if (fout == NULL) {
 		cerr << "file can not open" << endl;
@@ -47,8 +58,7 @@ int main(int argc, char *argv[])
 	while ((tmp = getchar()) != EOF)
 		fputc(tmp, fout);
 	fclose(fout);
-	/* initiate corresponding acl object */
-	initial_acl = "./lanyang/" + uname + "-" + object_name + "-acl";
+	/* initiate corresponding acl object */	
 	fout = fopen(initial_acl.c_str(), "w");
 	if (fout == NULL) {
 		cerr << "file can not open" << endl;

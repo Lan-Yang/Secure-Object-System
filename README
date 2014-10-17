@@ -1,5 +1,5 @@
 README by Lan Yang (uni: ly2331)
-hmwk1:
+HMWK1:
 Completed realization of six commands: objput, objget, objlist, objsetacl, 
 objgetacl and objtestacl.
 For each command, permission checking includes the following steps.
@@ -21,9 +21,9 @@ legal user and object names in user_object. When a new object was
 created by 
 some user, I created an initial ACL and added a record to user_object.
 
-hmwk2:
+HMWK2:
 For this homework, programs use the actual user and group ID
-by functions like getuid() and getgroups(). And the initial user
+by functions like getuid() and getgid(). And the initial user
 and group information is in userfile which is userfile.txt in my 
 programs. 
 For each command, permission checking includes the following steps.
@@ -77,6 +77,9 @@ Justification of using non-privileged UID
 3.	This design satisfies the requirement for availability.
 	By executing my programs and checking ACLs, other users can 
 	access the repository. 
+4.	It satisfies the requirment which is do not give programs the privilege
+	it doesn't need.
+
 Since the non-privileged UID can satisfy the needs for a secure system,
 it is not necessary to set root as the repository's owner. Furthermore,
 the second choice may result in dangers. After setting setUID, the user 

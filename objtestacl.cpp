@@ -45,8 +45,14 @@ int main(int argc, char *argv[])
 		parse_command(object_name, object_name_parse);
 		uname2 = object_name_parse[0];
 		object_name = object_name_parse[1];
-		acl_name = "./lanyang/" + uname2 + "-" + object_name + "-acl";
-		/* check referenced user name whether valid?? */
+		/* check referenced user name whether valid */
+		if (check_user(uname2)) {
+			acl_name = "./lanyang/" + uname2 + "-" + object_name + "-acl";
+		}
+		else {
+			cerr << "user does not exist" << endl;
+			return 1;
+		}
 	} else {
 		acl_name = "./lanyang/" + uname + "-" + object_name + "-acl";
 	}

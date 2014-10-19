@@ -20,3 +20,4 @@ bool check_user_group(const string &uname, const string &gname);
 bool check_reference(const string &input);
 bool check_acl(const string &acl_name, const string &uname, const string &gname,
                const string &per);
+bool check_user(const string &uname);

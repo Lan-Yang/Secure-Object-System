@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 	string object_name;
 	string file_name;
 	string acl_name;
-	string tmp;
+	char tmp;
 	vector<string> usergroup;
 	vector<string> userobject;
 	vector<string> acl;
@@ -38,8 +38,14 @@ int main(int argc, char *argv[])
 		parse_command(object_name, object_name_parse);
 		uname2 = object_name_parse[0];
 		object_name = object_name_parse[1];
-		file_name = "./lanyang/" + uname2 + "-" + object_name;
-	/* check referenced user name whether valid?? */
+		/* check referenced user name whether valid */
+		if (check_user(uname2)) {
+			file_name = "./lanyang/" + uname2 + "-" + object_name;
+		}
+		else {
+			cerr << "user does not exist" << endl;
+			return 1;
+		}		
 	} else {
 		file_name = "./lanyang/" + uname + "-" + object_name;
 	}
@@ -60,11 +66,17 @@ int main(int argc, char *argv[])
 		cerr << "file can not open" << endl;
 		return 1;
 	}
-	while (!file.eof()) {
-		getline(file, tmp);
-		if (tmp.length() != 0) /* avoid empty string pushed to vector */
-			cout << tmp << endl;
+	while (file.good()) {
+		tmp = file.get();
+		if (file.good())
+			cout << tmp;
 	}
+	/* while (!file.eof()) {
+		
+		getline(file, tmp);
+		if (tmp.length() != 0)  avoid empty string pushed to vector 
+			cout << tmp << endl;
+	} */
 	file.close();
 	return 0;
 }

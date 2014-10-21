@@ -55,6 +55,8 @@ bool check_user_group(const string &uname, const string &gname)
 	vector<string> user_group_parse; /* a user can at most in 10 groups */
 	ifstream file;
 
+	if (uname == "*" && gname == "*")
+		return true;
 	file.open("userfile.txt");
 	if (!file) {
 		cerr << "file can not open" << endl;
@@ -65,9 +67,26 @@ bool check_user_group(const string &uname, const string &gname)
 		if (!tmp.empty()) /* avoid empty string push to vector */
 			usergroup.push_back(tmp);
 	}
+	/* uname is "*" gname is not "*" */
+	if (uname == "*" && gname != "*") {
+		for (i = 0; i < usergroup.size(); i++) {
+			user_group_parse.clear();
+			parse_command(usergroup[i], user_group_parse);
+			for (j = 1; j < user_group_parse.size(); j++) {
+				if (user_group_parse[j] == gname)
+					return true;
+			}
+		}
+		cerr << "group does not exist" << endl;
+		return false;
+	}
+	/* uname is not "*" */
 	for (i = 0; i < usergroup.size(); i++) {
+		user_group_parse.clear();
 		parse_command(usergroup[i], user_group_parse);
 		if (user_group_parse[0] == uname) { /* username matches */
+			if (gname == "*")
+				return true;
 			for (j = 0; j < user_group_parse.size(); j++) {
 				if (user_group_parse[j] == gname)
 					break;
@@ -94,6 +113,8 @@ bool check_user(const string &uname)
 	vector<string> user_group_parse; /* a user can at most in 10 groups */
 	ifstream file;
 
+	if (uname == "*")
+		return true;
 	file.open("userfile.txt");
 	if (!file) {
 		cerr << "file can not open" << endl;

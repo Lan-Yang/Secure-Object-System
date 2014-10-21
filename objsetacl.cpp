@@ -2,6 +2,8 @@
 
 int main(int argc, char *argv[])
 {
+	unsigned int i;	
+	unsigned int j;
 	opterr = 0;
 	string uname; /* user name */
 	string uname2;
@@ -9,9 +11,12 @@ int main(int argc, char *argv[])
 	string object_name; /* object name */
 	string acl_file_name;
 	vector<string> object_name_parse;
-	FILE *fout;
+	vector<string> acl; /* to check if the read in content is valid */
+	vector<string> acl_parse; /* user.group ops */
 	ofstream file;
-	char tmp;
+	FILE *fout;
+	int tmp;
+	char tmp_acl[1024];
 	struct passwd *tmp1 = NULL;
 	struct group *tmp2 = NULL;
 
@@ -61,19 +66,62 @@ int main(int argc, char *argv[])
 		cerr << "no permission to change acl" << endl;
 		return 1;
 	}
-	/* read file from stdin, write its content to object */
-	fout = fopen(acl_file_name.c_str(), "w");
-
-
-	//file.open(acl_file_name.c_str(), ios::out | ios::trunc);
-	if (fout == NULL) {
-		cerr << "file can not open" << endl;
-		return 1;
+	/* check it stdin content is valid */
+	
+	/*while (cin.good()) {
+		cin.getline(tmp_acl, 1024, '\n');				
+		cout << "cin: ";
+		if (strlen(tmp_acl) != 0)  avoid empty string push to vector
+			acl.push_back(tmp_acl);
+	}*/	
+	while ((tmp = getchar()) != EOF) {
+		ungetc(tmp, stdin);		
+		tmp_acl = getline();
+		if (strlen(tmp_acl) != 0) 
+			acl.push_back(tmp_acl);
 	}
 
-	while ((tmp = getchar()) != EOF)
-		fputc(tmp, fout);
-	fclose(fout);
+	for (i = 0; i < acl.size(); i++) {
+		parse_command(acl[i].c_str(), acl_parse);
+		/* check content */
+		if (acl_parse.size() > 3) {
+			cerr << "illegal content for new acl" << endl;
+			return 1;
+		}
+		if (!check_user(acl_parse[0])) {
+			cout << acl_parse[0] << endl;			
+			cerr << "illegal user for new acl" << endl;
+			return 1;		
+		}
+		if (!check_user_group(acl_parse[0], acl_parse[1])) {
+			cerr << "illegal group for new acl" << endl;
+			return 1;
+		}
+		if (acl_parse.size() == 3) {
+			for (j = 0; j < acl_parse[2].size(); i++) {
+				if (acl_parse[2][j] != 'r' && 
+				acl_parse[2][j] != 'w' &&
+				acl_parse[2][j] != 'x' &&
+				acl_parse[2][j] != 'p' &&
+				acl_parse[2][j] != 'v') {
+					cerr << "illegal content for new acl" << endl;
+					return 1;
+				}
+			}
+		}
+	}
+	/* read file from stdin, write its content to object */
+	fout = fopen(acl_file_name.c_str(), "w");	
+	file.open(acl_file_name.c_str());
+	if (fout == NULL) {
+		cerr << "file can not open" << endl;
+		return false;
+	}
+	for (i = 0; i < acl.size(); i++) 
+	{
+		file << acl[i] << endl;
+	}
+	file.close();
 	return 0;
 }
 

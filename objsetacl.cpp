@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-	unsigned int i;	
+	unsigned int i;
 	unsigned int j;
 	opterr = 0;
 	string uname; /* user name */
@@ -22,15 +22,15 @@ int main(int argc, char *argv[])
 
 	tmp1 = getpwuid(getuid());
 	tmp2 = getgrgid(getgid());
-	if(tmp1 == NULL||tmp2 == NULL){
-		cerr<<"error"<<endl;
-		return 1;	
-	}else {
+	if (tmp1 == NULL || tmp2 == NULL) {
+		cerr << "error" << endl;
+		return 1;
+	} else {
 		uname = tmp1 -> pw_name;
 		gname = tmp2 -> gr_name;
 	}
 	/* check user and group whether in userfile */
-	if (!check_user_group(uname,gname))
+	if (!check_user_group(uname, gname))
 		return 1;
 	/* check commands */
 	if (argc != 2) {
@@ -46,8 +46,7 @@ int main(int argc, char *argv[])
 		/* check referenced user name whether valid */
 		if (check_user(uname2)) {
 			acl_file_name = "./lanyang/" + uname2 + "-" + object_name + "-acl";
-		}
-		else {
+		} else {
 			cerr << "user does not exist" << endl;
 			return 1;
 		}
@@ -71,9 +70,9 @@ int main(int argc, char *argv[])
 	}
 	/* check acl content whether valid */
 	while ((tmp = getchar()) != EOF) {
-		ungetc(tmp, stdin);		
+		ungetc(tmp, stdin);
 		getline(cin, tmp_acl);
-		if (tmp_acl.length() != 0) 
+		if (tmp_acl.length() != 0)
 			acl.push_back(tmp_acl);
 	}
 	for (i = 0; i < acl.size(); i++) {
@@ -83,9 +82,9 @@ int main(int argc, char *argv[])
 			cerr << "illegal content for new acl" << endl;
 			return 1;
 		}
-		if (!check_user(acl_parse[0])) {			
+		if (!check_user(acl_parse[0])) {
 			cerr << "illegal user for new acl" << endl;
-			return 1;		
+			return 1;
 		}
 		if (!check_user_group(acl_parse[0], acl_parse[1])) {
 			cerr << "illegal group for new acl" << endl;
@@ -93,11 +92,11 @@ int main(int argc, char *argv[])
 		}
 		if (acl_parse.size() == 3) {
 			for (j = 0; j < acl_parse[2].size(); j++) {
-				if (acl_parse[2][j] != 'r' && 
-				acl_parse[2][j] != 'w' &&
-				acl_parse[2][j] != 'x' &&
-				acl_parse[2][j] != 'p' &&
-				acl_parse[2][j] != 'v') {
+				if (acl_parse[2][j] != 'r' &&
+						acl_parse[2][j] != 'w' &&
+						acl_parse[2][j] != 'x' &&
+						acl_parse[2][j] != 'p' &&
+						acl_parse[2][j] != 'v') {
 					cerr << "illegal content for new acl" << endl;
 					return 1;
 				}
@@ -105,14 +104,13 @@ int main(int argc, char *argv[])
 		}
 	}
 	/* read file from stdin, write its content to object */
-	fout = fopen(acl_file_name.c_str(), "w");	
+	fout = fopen(acl_file_name.c_str(), "w");
 	file.open(acl_file_name.c_str());
 	if (fout == NULL) {
 		cerr << "file can not open" << endl;
 		return false;
 	}
-	for (i = 0; i < acl.size(); i++) 
-	{
+	for (i = 0; i < acl.size(); i++) {
 		file << acl[i] << endl;
 	}
 	file.close();

@@ -13,9 +13,9 @@ bool check_name_valid(const string &input)
 	LL = input.size();
 	for (i = 0; i < LL; i++) {
 		if (((input[i] >= '0') && (input[i] <= '9'))
-		                || ((input[i] >= 'a') && (input[i] <= 'z'))
-		                || ((input[i] >= 'A') && (input[i] <= 'Z'))
-		                || (input[i] == '_'))
+				|| ((input[i] >= 'a') && (input[i] <= 'z'))
+				|| ((input[i] >= 'A') && (input[i] <= 'Z'))
+				|| (input[i] == '_'))
 			continue;
 		return false;
 	}
@@ -143,7 +143,7 @@ bool check_reference(const string &input)
 }
 
 bool check_acl(const string &acl_name, const string &uname, const string &gname,
-               const string &per)
+	       const string &per)
 {
 	unsigned int i;
 	string tmp;
@@ -164,8 +164,8 @@ bool check_acl(const string &acl_name, const string &uname, const string &gname,
 	for (i = 0; i < acl.size(); i++) {
 		parse_command(acl[i].c_str(), acl_parse);
 		if (((acl_parse[0] == uname) || (acl_parse[0] == "*")) &&
-		                ((acl_parse[1] == gname) ||
-		                 (acl_parse[1] == "*"))) {
+				((acl_parse[1] == gname) ||
+				 (acl_parse[1] == "*"))) {
 			if (acl_parse.size() < 3)
 				return false;
 			tmp = acl_parse[2];

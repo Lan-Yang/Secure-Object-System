@@ -33,10 +33,10 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	tmp1 = getpwuid(getuid());
-	if(tmp1 == NULL){
-		cerr<<"error"<<endl;
-		return 1;	
-	}else {
+	if (tmp1 == NULL) {
+		cerr << "error" << endl;
+		return 1;
+	} else {
 		uname = tmp1 -> pw_name;
 	}
 	/* check user and group whether in userfile */

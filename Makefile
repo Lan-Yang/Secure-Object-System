@@ -56,6 +56,10 @@ test:	clean build exec
 	su u1 -c "./objget bin | wc -c"
 	cat binfile | wc -c
 	@echo "------------"
+	su u1 -c "./objput bigbin < bigbinfile"
+	su u1 -c "./objget bigbin | wc -c"
+	cat bigbinfile | wc -c
+	@echo "------------"
 	su u2 -c "./objput doc < testfile3"
 	su u2 -c "./objget doc"
 	@echo "------------"

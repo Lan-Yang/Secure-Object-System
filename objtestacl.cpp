@@ -33,15 +33,15 @@ int main(int argc, char *argv[])
 	object_name = argv[3];
 	tmp1 = getpwuid(getuid());
 	tmp2 = getgrgid(getgid());
-	if(tmp1 == NULL||tmp2 == NULL){
-		cerr<<"error"<<endl;
-		return 1;	
-	}else {
+	if (tmp1 == NULL || tmp2 == NULL) {
+		cerr << "error" << endl;
+		return 1;
+	} else {
 		uname = tmp1 -> pw_name;
 		gname = tmp2 -> gr_name;
 	}
 	/* check user and group whether in userfile */
-	if (!check_user_group(uname,gname))
+	if (!check_user_group(uname, gname))
 		return 1;
 	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
@@ -51,8 +51,7 @@ int main(int argc, char *argv[])
 		/* check referenced user name whether valid */
 		if (check_user(uname2)) {
 			acl_name = "./lanyang/" + uname2 + "-" + object_name + "-acl";
-		}
-		else {
+		} else {
 			cerr << "user does not exist" << endl;
 			return 1;
 		}

@@ -22,15 +22,15 @@ int main(int argc, char *argv[])
 	/* input commands */
 	tmp1 = getpwuid(getuid());
 	tmp2 = getgrgid(getgid());
-	if(tmp1 == NULL||tmp2 == NULL){
-		cerr<<"error"<<endl;
-		return 1;	
-	}else {
+	if (tmp1 == NULL || tmp2 == NULL) {
+		cerr << "error" << endl;
+		return 1;
+	} else {
 		uname = tmp1 -> pw_name;
 		gname = tmp2 -> gr_name;
 	}
 	/* check user and group whether in userfile */
-	if (!check_user_group(uname,gname))
+	if (!check_user_group(uname, gname))
 		return 1;
 	/* check commands */
 	if (argc != 2) {
@@ -46,8 +46,7 @@ int main(int argc, char *argv[])
 		/* check referenced user name whether valid */
 		if (check_user(uname2)) {
 			file_name = "./lanyang/" + uname2 + "-" + object_name;
-		}
-		else {
+		} else {
 			cerr << "user does not exist" << endl;
 			return 1;
 		}
@@ -66,14 +65,15 @@ int main(int argc, char *argv[])
 	if ((fout == NULL) && (uname == uname2))
 		init_flag = 1;
 	if (fout != NULL) {
-	/* if it exists, check acl "w" */
+		/* if it exists, check acl "w" */
 		if (!check_acl(initial_acl, uname, gname, "w")) {
 			cerr << "object exists. no permission to write" << endl;
 			return 1;
 		}
 	}
-	if ((fout == NULL)&&(uname2 != uname)) {
-		cerr << uname <<" has no permission to create doc belongs to " << uname2 << endl;
+	if ((fout == NULL) && (uname2 != uname)) {
+		cerr << uname << " has no permission to create doc belongs to " << uname2 <<
+		     endl;
 		return 1;
 	}
 	/* if user has permission to write */
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 	while ((tmp = getchar()) != EOF)
 		fputc(tmp, fout);
 	fclose(fout);
-	/* initiate corresponding acl object */	
+	/* initiate corresponding acl object */
 	if (init_flag == 1) {
 		fout = fopen(initial_acl.c_str(), "w");
 		if (fout == NULL) {
@@ -111,10 +111,9 @@ int main(int argc, char *argv[])
 		if (!file3) {
 			cerr << "file can not open" << endl;
 			return 1;
-		}
-		else {
-			file3 << object_name << " " << uname2 << " " 
-				<< gname << '\n';
+		} else {
+			file3 << object_name << " " << uname2 << " "
+			      << gname << '\n';
 		}
 		file3.close();
 	}

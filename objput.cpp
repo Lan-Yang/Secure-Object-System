@@ -29,6 +29,9 @@ int main(int argc, char *argv[])
 		uname = tmp1 -> pw_name;
 		gname = tmp2 -> gr_name;
 	}
+	/* check user and group whether in userfile */
+	if (!check_user_group(uname,gname))
+		return 1;
 	/* check commands */
 	if (argc != 2) {
 		cerr << "command not found" << endl;

@@ -39,6 +39,9 @@ int main(int argc, char *argv[])
 	}else {
 		uname = tmp1 -> pw_name;
 	}
+	/* check user and group whether in userfile */
+	if (!check_user(uname))
+		return 1;
 	/* check if the user has the privilege to access this file */
 	file.open("lanyang/user_object");
 	if (!file) {

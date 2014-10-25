@@ -35,61 +35,62 @@ objtestacl: objtestacl.o functions.o
 # Lines preceeded by @ aren't echoed before executing
 # Execution will stop if a program has a non-zero return code;
 # precede the line with a - to override that
-test:	build exec
+test:	clean build exec
 	@echo "------------"
-	-su u1 -c "./objput doc < testfile"
+	su u1 -c "./objput doc < testfile"
+	-su u2 -c "./objput u1+doc < testfile"
+	-su u2 -c "./objput u1+doc2 < testfile"
 	@echo "------------"
-	-su u1 -c "./objgetacl doc"
+	su u1 -c "./objgetacl doc"
 	@echo "------------"
-	-su u1 -c "./objsetacl doc < newacl2"
+	su u1 -c "./objsetacl doc < newacl2"
+	-su u1 -c "./objsetacl doc < erroracl1"
+	-su u1 -c "./objsetacl doc < erroracl2"
+	-su u1 -c "./objsetacl doc < erroracl3"
+	-su u1 -c "./objsetacl doc < erroracl4"
+	-su u1 -c "./objsetacl doc < erroracl5"
 	@echo "------------"
-	-su u1 -c "./objgetacl doc"
+	su u1 -c "./objgetacl doc"
 	@echo "------------"
-	-su u1 -c "./objput doc2 < a"
+	su u1 -c "./objput bin < binfile"
+	su u1 -c "./objget bin | wc -c"
+	cat binfile | wc -c
 	@echo "------------"
-	-su u2 -c "./objput doc < testfile3"
-	@echo "------------"
-	-su u1 -c "./objget doc"
-	@echo "------------"
-	-su u1 -c "./objget doc2 | wc -c"
-	@echo "------------"
-	-su u2 -c "./objget doc"
+	su u2 -c "./objput doc < testfile3"
+	su u2 -c "./objget doc"
 	@echo "------------"
 	-su u2 -c "./objget u1+doc"
 	@echo "------------"
 	-su u1 -c "./objget do@"
 	@echo "------------"
-	-su u1 -c "./objlist"
+	su u1 -c "./objlist"
 	@echo "------------"
-	-su u1 -c "./objlist -l"
-	@echo "------------"
-	-su u1 -c "./objgetacl doc"
-	@echo "------------"
-	-su u2 -c "./objgetacl doc"
+	su u1 -c "./objlist -l"
 	@echo "------------"
 	-su u2 -c "./objgetacl u1+doc"
 	@echo "------------"
-	-su u1 -c "./objtestacl -a r doc"
+	su u1 -c "./objtestacl -a r doc"
 	@echo "------------"
-	-su u1 -c "./objtestacl -a x doc"
+	su u1 -c "./objtestacl -a x doc"
 	@echo "------------"
-	-su u2 -c "./objtestacl -a r u1+doc"
+	su u2 -c "./objtestacl -a r u1+doc"
 	@echo "------------"
-	-su u1 -c "./objsetacl doc < newacl"
-	@echo "------------"
-	-su u1 -c "./objgetacl doc"
+	su u1 -c "./objsetacl doc < newacl"
+	su u1 -c "./objgetacl doc"
 	@echo "------------"
 	-su u2 -c "./objgetacl u1+doc"
 	@echo "------------"
 	-su u2 -c "./objsetacl u1+doc < newacl2"
 	@echo "------------"
-	-su u2 -c "./objgetacl u1+doc"
+	su u2 -c "./objtestacl -a r u1+doc"
+	-su u2 -c "./objtestacl -a p u1+doc"
 	@echo "------------"
+	-su u1 -c "./objtestacl -a w doc"
 	-su u1 -c "./objput doc < testfile"
 	
 .PHONY: exec
 
- exec: build
+ exec: clean build
 	@chmod +x precommands.sh
 	@chmod +x readfile.sh
 	@./precommands.sh
@@ -116,6 +117,6 @@ endif
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) *.core *.o *~ *.*~ .*~ lanyang/*-* lanyang/*_*
-	rmdir lanyang
+	-rm -f $(OBJ) *.core *.o *~ *.*~ .*~ lanyang/*-* lanyang/*_* userfile.txt
+	-rmdir lanyang
 

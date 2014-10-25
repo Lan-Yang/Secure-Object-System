@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	ofstream file;
 	FILE *fout;
 	int tmp;
-	char tmp_acl[1024];
+	string tmp_acl;
 	struct passwd *tmp1 = NULL;
 	struct group *tmp2 = NULL;
 
@@ -29,6 +29,9 @@ int main(int argc, char *argv[])
 		uname = tmp1 -> pw_name;
 		gname = tmp2 -> gr_name;
 	}
+	/* check user and group whether in userfile */
+	if (!check_user_group(uname,gname))
+		return 1;
 	/* check commands */
 	if (argc != 2) {
 		cerr << "command not found" << endl;
@@ -66,30 +69,21 @@ int main(int argc, char *argv[])
 		cerr << "no permission to change acl" << endl;
 		return 1;
 	}
-	/* check it stdin content is valid */
-	
-	/*while (cin.good()) {
-		cin.getline(tmp_acl, 1024, '\n');				
-		cout << "cin: ";
-		if (strlen(tmp_acl) != 0)  avoid empty string push to vector
-			acl.push_back(tmp_acl);
-	}*/	
+	/* check acl content whether valid */
 	while ((tmp = getchar()) != EOF) {
 		ungetc(tmp, stdin);		
-		tmp_acl = getline();
-		if (strlen(tmp_acl) != 0) 
+		getline(cin, tmp_acl);
+		if (tmp_acl.length() != 0) 
 			acl.push_back(tmp_acl);
 	}
-
 	for (i = 0; i < acl.size(); i++) {
 		parse_command(acl[i].c_str(), acl_parse);
 		/* check content */
-		if (acl_parse.size() > 3) {
+		if (acl_parse.size() > 3 || acl_parse.size() < 2) {
 			cerr << "illegal content for new acl" << endl;
 			return 1;
 		}
-		if (!check_user(acl_parse[0])) {
-			cout << acl_parse[0] << endl;			
+		if (!check_user(acl_parse[0])) {			
 			cerr << "illegal user for new acl" << endl;
 			return 1;		
 		}
@@ -98,7 +92,7 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 		if (acl_parse.size() == 3) {
-			for (j = 0; j < acl_parse[2].size(); i++) {
+			for (j = 0; j < acl_parse[2].size(); j++) {
 				if (acl_parse[2][j] != 'r' && 
 				acl_parse[2][j] != 'w' &&
 				acl_parse[2][j] != 'x' &&

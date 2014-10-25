@@ -1,2 +1,2 @@
-u1.* rwxpv
-u2.g1 rwpv
+u1.* rxpv
+u2.g1 rwv

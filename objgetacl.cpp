@@ -32,6 +32,9 @@ int main(int argc, char *argv[])
 		uname = tmp1 -> pw_name;
 		gname = tmp2 -> gr_name;
 	}
+	/* check user and group whether in userfile */
+	if (!check_user_group(uname,gname))
+		return 1;
 	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
 		parse_command(object_name, object_name_parse);

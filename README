@@ -1,26 +1,4 @@
 README by Lan Yang (uni: ly2331)
-HMWK1:
-Completed realization of six commands: objput, objget, objlist, objsetacl, 
-objgetacl and objtestacl.
-For each command, permission checking includes the following steps.
-1.	check input command's number of arguments whether right.
-2.	check user namer, group name whether legal.
-3.	check object name whether includes "+" to handle the situation
-	that one may references others users' objects.
-4.	check object name whether legal.
-5.	check user_group to see whether user exists and belongs to the
-	group.
-6.	check user_object to see whether user has this object.
-7.	check the corresponding acl to make sure whether user has 
-	permission.
-The object size is unlimited, but I put a limit in user and group 
-information, 
-that is each user belongs to no more than ten groups.
-I stored the list of legal user and group names in user_group, and the list of 
-legal user and object names in user_object. When a new object was 
-created by 
-some user, I created an initial ACL and added a record to user_object.
-
 HMWK2:
 For this homework, programs use the actual user and group ID
 by functions like getuid() and getgid(). And the initial user
@@ -28,14 +6,25 @@ and group information is in userfile which is userfile.txt in my
 programs. 
 For each command, permission checking includes the following steps.
 1.	check input command's number of arguments whether right.
-2.	check object name whether includes "+" to handle the situation
+2.	check user and group whether legal.
+3.	check object name whether includes "+" to handle the situation
 	that one may references others users' objects.
-3.	check object name whether legal.
-4.	check userfile to see whether user exists and belongs to the
+4.	check object name whether legal.
+5.	check userfile to see whether user exists and belongs to the
 	group.
-5.	check user_object to see whether user has this object.
-6.	check the corresponding acl to make sure whether user has 
+6.	check user_object to see whether user has this object.
+7.	check the corresponding acl to make sure whether user has 
 	permission.
+8.	For setacl, check new acl's content.
+
+Default userfile:
+u1 g1 g3
+u2 g1 g4
+
+Non-privileged UID:
+ly2331 ly2331
+
+exec ./deleteuser can delete all created users and groups in the program.
 
 To ensure security, I set up permissions as follows.
 1.	I chose a non-privileged UID for the repository. The username
@@ -86,6 +75,28 @@ the second choice may result in dangers. After setting setUID, the user
 can have the same permission as the owner when executing, users may do 
 some malicious manipulation as root to other programs or processes in 
 the system, such as accessing secret information.
+
+HMWK1:
+Completed realization of six commands: objput, objget, objlist, objsetacl, 
+objgetacl and objtestacl.
+For each command, permission checking includes the following steps.
+1.	check input command's number of arguments whether right.
+2.	check user namer, group name whether legal.
+3.	check object name whether includes "+" to handle the situation
+	that one may references others users' objects.
+4.	check object name whether legal.
+5.	check user_group to see whether user exists and belongs to the
+	group.
+6.	check user_object to see whether user has this object.
+7.	check the corresponding acl to make sure whether user has 
+	permission.
+The object size is unlimited, but I put a limit in user and group 
+information, 
+that is each user belongs to no more than ten groups.
+I stored the list of legal user and group names in user_group, and the list of 
+legal user and object names in user_object. When a new object was 
+created by 
+some user, I created an initial ACL and added a record to user_object.
 
 	
 

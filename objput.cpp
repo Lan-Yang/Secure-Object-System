@@ -2,6 +2,7 @@
 
 int main(int argc, char *argv[])
 {
+	int ch;	
 	int flag = 0;
 	opterr = 0;
 	int init_flag = 0;
@@ -13,13 +14,39 @@ int main(int argc, char *argv[])
 	string file_name;
 	string obj_user_group;
 	string tmp_line;
+	string passphrase;
 	vector<string> object_name_parse;
 	FILE *fout;
+	FILE *fp;
 	int tmp; /* for getchar function, it needs to be int type */
 	struct passwd *tmp1 = NULL;
 	struct group *tmp2 = NULL;
+	const int byte_count = 16; /* generate 128 bits key and IV */
+	const int buff_count = 32;
+	unsigned char digest[MD5_DIGEST_LENGTH];
+	//unsigned char mdString[33];
+	unsigned char randomkey[buff_count];
+	unsigned char randomiv1[buff_count];
+	unsigned char randomiv2[buff_count];
+	unsigned char cipherkey[buff_count];
+	int cipherkey_len;
+	int ciphertext_len;
 
 	/* input commands */
+	while ((ch = getopt(argc, argv, "k:")) != -1) {
+		switch (ch) {
+		case 'k':
+			passphrase = optarg;
+			break;
+		default:
+			cerr << "command not correct" << endl;
+			return 1;
+		}
+	}
+	if (argc != 4) {
+		cerr << "command not correct" << endl;
+		return 1;
+	}
 	tmp1 = getpwuid(getuid());
 	tmp2 = getgrgid(getgid());
 	if (tmp1 == NULL || tmp2 == NULL) {
@@ -32,12 +59,7 @@ int main(int argc, char *argv[])
 	/* check user and group whether in userfile */
 	if (!check_user_group(uname, gname))
 		return 1;
-	/* check commands */
-	if (argc != 2) {
-		cerr << "command not found" << endl;
-		return 1;
-	}
-	object_name = argv[1];
+	object_name = argv[3];
 	/* check the condition that one references other users' objects */
 	if (check_reference(object_name)) {
 		parse_command(object_name, object_name_parse);
@@ -76,15 +98,13 @@ int main(int argc, char *argv[])
 		     endl;
 		return 1;
 	}
-	/* if user has permission to write */
+	/* check if user has permission to write */
 	fout = fopen(file_name.c_str(), "w");
 	if (fout == NULL) {
 		cerr << "file can not open" << endl;
 		return 1;
-	}
-	while ((tmp = getchar()) != EOF)
-		fputc(tmp, fout);
-	fclose(fout);
+	}	
+	
 	/* initiate corresponding acl object */
 	if (init_flag == 1) {
 		fout = fopen(initial_acl.c_str(), "w");
@@ -117,6 +137,50 @@ int main(int argc, char *argv[])
 		}
 		file3.close();
 	}
+	/* use md5 generate 128 bit key */
+	MD5((unsigned char*)(passphrase.c_str()),
+		passphrase.length(), (unsigned char*)&digest);
+	/* test 
+	for(int i = 0; i < 16; i++)
+		sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
+	printf("md5 digest: %s\n", mdString);*/
+	/* generate 128 bit random number */
+	fp = fopen("/dev/urandom", "r");
+	fread(&randomkey, 1, byte_count, fp);
+	fclose(fp);
+	for (int i = 0; i < byte_count; i++)
+		printf("%02x ",randomkey[i]);
+	printf("random numer\n");
+	/* generate 128 bit random iv1 */
+	fp = fopen("/dev/urandom", "r");
+	fread(&randomiv1, 1, byte_count, fp);
+	fclose(fp);
+	for (int i = 0; i < byte_count; i++)
+		printf("%02x ",randomiv1[i]);
+	printf("random iv1\n");
+	/* generate 128 bit random iv1 */
+	fp = fopen("/dev/urandom", "r");
+	fread(&randomiv2, 1, byte_count, fp);
+	fclose(fp);
+	for (int i = 0; i < byte_count; i++)
+		printf("%02x ",randomiv2[i]);
+	printf("random iv2\n");
+	/* Initialise the library */
+	ERR_load_crypto_strings();
+	OpenSSL_add_all_algorithms();
+	OPENSSL_config(NULL);
+	/* encrypt random number using ASE */
+	cipherkey_len = aesencrypt(randomkey, byte_count, digest, randomiv1,
+				 cipherkey);
+	printf("aes key length: %d\n", cipherkey_len);
+	/* encrypt plaint text using ASE */
+
+	/* write into file */
+	fout = fopen(file_name.c_str(), "w");
+	while ((tmp = getchar()) != EOF)
+		fputc(tmp, fout);
+	fclose(fout);
+	
 	return 0;
 }
 

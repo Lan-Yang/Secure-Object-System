@@ -14,7 +14,9 @@ do
 		#userdel $username
 		groupadd $groupname
 		useradd -g $groupname $username
-		#echo $username:$username | chpasswd
+		echo $username:$username | chpasswd
+		mkdir /home/$username
+		chown $username /home/$username
 		for (( i = 0;$i < ($num-2);i=$i+1 )) ;
 		do
 			g[$i]=${a[$i+2]};

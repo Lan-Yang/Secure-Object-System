@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 	string object_name; /* object name */
 	string initial_acl;
 	string file_name;
+	string passfile_name;
 	string obj_user_group;
 	string tmp_line;
 	string passphrase;
@@ -29,10 +30,13 @@ int main(int argc, char *argv[])
 	unsigned char randomiv1[buff_count];
 	unsigned char randomiv2[buff_count];
 	unsigned char cipherkey[buff_count];
-	//unsigned char buff[buff_count];
-	//unsigned char ciphertext[buff_count];
+	unsigned char buff[buff_count];
+	unsigned char ciphertext[buff_count];
 	int cipherkey_len;
 	//int ciphertext_len;
+	EVP_CIPHER_CTX *ctx;
+	int m = 0;
+	int len;
 
 	/* input commands */
 	while ((ch = getopt(argc, argv, "k:")) != -1) {
@@ -183,24 +187,32 @@ int main(int argc, char *argv[])
 		fputc(tmp, fout);
 	fclose(fout); */
 
-	/* write into a temporary file and encrypt it 
-	ciphertext_len = 0;
-	EVP_CIPHER_CTX *ctx;
+	/* write into a temporary file and encrypt it */
+	fout = fopen(file_name.c_str(), "w");
 	if(!(ctx = EVP_CIPHER_CTX_new())) handleErrors();
-	fread(buff, 1, byte_count, stdin);
 	if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, randomkey, randomiv2))
 		handleErrors();
-	while () {
-		if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) handleErrors();
-		ciphertext_len += len;
-	}
-
-	if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) handleErrors();
-	ciphertext_len += len;
+	do{
+		m = fread(buff, 1, byte_count, stdin);
+		if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len, buff, byte_count))
+			handleErrors();
+		fwrite(ciphertext, 1, len, fout);
+		if (m < byte_count) {
+			if(1 != EVP_EncryptFinal_ex(ctx, ciphertext, &len)) 
+				handleErrors();
+			fwrite(ciphertext, 1, len, fout);
+			break;	
+		}	
+	}while(m == byte_count);
+	fclose(fout);
 	EVP_CIPHER_CTX_free(ctx);
-	printf("aes text length: %d\n", ciphertext_len); */
-
-	
+	/* store key and Ivs */
+	passfile_name = file_name + "-" + "key";
+	fout = fopen(passfile_name.c_str(), "w");
+	fwrite(cipherkey, 1, byte_count, fout);
+	fwrite(randomiv1, 1, byte_count, fout);
+	fwrite(randomiv2, 1, byte_count, fout);
+	fclose(fout);
 	return 0;
 }
 

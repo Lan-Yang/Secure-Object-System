@@ -42,13 +42,13 @@ int main(int argc, char *argv[])
 		object_name = object_name_parse[1];
 		/* check referenced user name whether valid */
 		if (check_user(uname2)) {
-			acl_name = "./lanyang/" + uname2 + "-" + object_name + "-acl";
+			acl_name = "/home/lanyang/" + uname2 + "-" + object_name + "-acl";
 		} else {
 			cerr << "user does not exist" << endl;
 			return 1;
 		}
 	} else {
-		acl_name = "./lanyang/" + uname + "-" + object_name + "-acl";
+		acl_name = "/home/lanyang/" + uname + "-" + object_name + "-acl";
 	}
 	if (uname == uname2) {
 		cerr << "command not found" << endl;

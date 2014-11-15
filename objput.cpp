@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	vector<string> object_name_parse;
 	FILE *fout;
 	FILE *fp;
-	int tmp; /* for getchar function, it needs to be int type */
+	/* int tmp; for getchar function, it needs to be int type */
 	struct passwd *tmp1 = NULL;
 	struct group *tmp2 = NULL;
 	const int byte_count = 16; /* generate 128 bits key and IV */
@@ -29,8 +29,10 @@ int main(int argc, char *argv[])
 	unsigned char randomiv1[buff_count];
 	unsigned char randomiv2[buff_count];
 	unsigned char cipherkey[buff_count];
+	//unsigned char buff[buff_count];
+	//unsigned char ciphertext[buff_count];
 	int cipherkey_len;
-	int ciphertext_len;
+	//int ciphertext_len;
 
 	/* input commands */
 	while ((ch = getopt(argc, argv, "k:")) != -1) {
@@ -67,14 +69,14 @@ int main(int argc, char *argv[])
 		object_name = object_name_parse[1];
 		/* check referenced user name whether valid */
 		if (check_user(uname2)) {
-			file_name = "./lanyang/" + uname2 + "-" + object_name;
+			file_name = "/home/lanyang/" + uname2 + "-" + object_name;
 		} else {
 			cerr << "user does not exist" << endl;
 			return 1;
 		}
 	} else {
 		uname2 = uname;
-		file_name = "./lanyang/" + uname + "-" + object_name;
+		file_name = "/home/lanyang/" + uname + "-" + object_name;
 	}
 	/* check object name whether valid */
 	if (!check_name_valid(object_name)) {
@@ -118,7 +120,7 @@ int main(int argc, char *argv[])
 	/* record to the user object file */
 	obj_user_group = object_name + " " + uname2 + " " + gname;
 	ifstream file2;
-	file2.open("./lanyang/user_object");
+	file2.open("/home/lanyang/user_object");
 	while (!file2.eof()) {
 		getline(file2, tmp_line);
 		if (tmp_line == obj_user_group)
@@ -127,7 +129,7 @@ int main(int argc, char *argv[])
 	file2.close();
 	ofstream file3;
 	if (flag == 0) {
-		file3.open("./lanyang/user_object", ios::ate | ios::app);
+		file3.open("/home/lanyang/user_object", ios::ate | ios::app);
 		if (!file3) {
 			cerr << "file can not open" << endl;
 			return 1;
@@ -173,13 +175,31 @@ int main(int argc, char *argv[])
 	cipherkey_len = aesencrypt(randomkey, byte_count, digest, randomiv1,
 				 cipherkey);
 	printf("aes key length: %d\n", cipherkey_len);
-	/* encrypt plaint text using ASE */
+	/* encrypt plaint text using AES */
 
-	/* write into file */
+	/* write into file 
 	fout = fopen(file_name.c_str(), "w");
 	while ((tmp = getchar()) != EOF)
 		fputc(tmp, fout);
-	fclose(fout);
+	fclose(fout); */
+
+	/* write into a temporary file and encrypt it 
+	ciphertext_len = 0;
+	EVP_CIPHER_CTX *ctx;
+	if(!(ctx = EVP_CIPHER_CTX_new())) handleErrors();
+	fread(buff, 1, byte_count, stdin);
+	if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, randomkey, randomiv2))
+		handleErrors();
+	while () {
+		if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) handleErrors();
+		ciphertext_len += len;
+	}
+
+	if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) handleErrors();
+	ciphertext_len += len;
+	EVP_CIPHER_CTX_free(ctx);
+	printf("aes text length: %d\n", ciphertext_len); */
+
 	
 	return 0;
 }

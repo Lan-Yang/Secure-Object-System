@@ -95,6 +95,7 @@ test:	clean build exec
 .PHONY: exec
 
  exec: clean build
+	@chmod 775 ./
 	@chmod +x precommands.sh
 	@chmod +x readfile.sh
 	@./precommands.sh
@@ -102,10 +103,10 @@ test:	clean build exec
 	@chgrp ly2331 $(OBJ)
 	@chmod 701 $(OBJ)
 	@chmod u+s $(OBJ)
-	@touch lanyang/user_object
-	@chown ly2331 lanyang/user_object
-	@chgrp ly2331 lanyang/user_object
-	@chmod 700 lanyang/user_object
+	@touch /home/lanyang/user_object
+	@chown ly2331 /home/lanyang/user_object
+	@chgrp ly2331 /home/lanyang/user_object
+	@chmod 700 /home/lanyang/user_object
 ifneq "$(strip $(userfile))" ""
 	@echo init to $(userfile)
 	@cat $(userfile) > userfile.txt
@@ -121,6 +122,6 @@ endif
 
 .PHONY: clean
 clean:
-	-rm -f $(OBJ) *.core *.o *~ *.*~ .*~ lanyang/*-* lanyang/*_* userfile.txt
-	-rmdir lanyang
-
+	-rm -f $(OBJ) *.core *.o *~ *.*~ .*~ /home/lanyang/*-* /home/lanyang/*_* userfile.txt
+	-rmdir /home/lanyang
+	-rm /home/objput /home/objget /home/objlist /home/objsetacl /home/objgetacl /home/objtestacl

@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	if (!check_user(uname))
 		return 1;
 	/* check if the user has the privilege to access this file */
-	file.open("lanyang/user_object");
+	file.open("/home/lanyang/user_object");
 	if (!file) {
 		cerr << "file can not open" << endl;
 		return 1;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 	/* if the user has an object list, then print it */
 	for (i = 0; i < objlist.size(); i++) {
 		if (flag == 1) {
-			file_name = "./lanyang/" + uname + "-" + objlist[i];
+			file_name = "/home/lanyang/" + uname + "-" + objlist[i];
 			file.open(file_name.c_str(), ios::ate | ios::binary);
 			if (!file) {
 				cerr << "file can not open" << endl;

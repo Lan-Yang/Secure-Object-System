@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	struct passwd *tmp1 = NULL;
 	struct group *tmp2 = NULL;
 	const int byte_count = 16; /* generate 128 bits key and IV */
-	const int buff_count = 32;
+	const int buff_count = 50;
 	unsigned char digest[MD5_DIGEST_LENGTH];
 	//unsigned char mdString[33];
 	unsigned char randomkey[buff_count];
@@ -179,6 +179,9 @@ int main(int argc, char *argv[])
 	cipherkey_len = aesencrypt(randomkey, byte_count, digest, randomiv1,
 				 cipherkey);
 	printf("aes key length: %d\n", cipherkey_len);
+	for (int i = 0; i < cipherkey_len; i++)
+		printf("%02x ",cipherkey[i]);
+	printf("cipher key\n");
 	/* encrypt plaint text using AES */
 
 	/* write into file 
@@ -209,7 +212,7 @@ int main(int argc, char *argv[])
 	/* store key and Ivs */
 	passfile_name = file_name + "-" + "key";
 	fout = fopen(passfile_name.c_str(), "w");
-	fwrite(cipherkey, 1, byte_count, fout);
+	fwrite(cipherkey, 1, byte_count*2, fout);
 	fwrite(randomiv1, 1, byte_count, fout);
 	fwrite(randomiv2, 1, byte_count, fout);
 	fclose(fout);

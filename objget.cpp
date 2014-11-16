@@ -12,7 +12,6 @@ int main(int argc, char *argv[])
 	string acl_name;
 	string passfile_name;
 	string passphrase;
-	//char tmp;
 	vector<string> usergroup;
 	vector<string> userobject;
 	vector<string> acl;
@@ -30,10 +29,8 @@ int main(int argc, char *argv[])
 	unsigned char cipherkey[buff_count];
 	unsigned char buff[buff_count];
 	unsigned char plaintext[buff_count];
-	//int cipherkey_len;
 	EVP_CIPHER_CTX *ctx;
 	int m = 0;
-	int i = 0;
 	int len;
 
 	/* input commands */
@@ -93,26 +90,16 @@ int main(int argc, char *argv[])
 	/* if the user has access, then print the object to stdout */
 	passfile_name = file_name + "-" + "key";
 	fout = fopen(passfile_name.c_str(), "r");
+	
 	fread(cipherkey, 1, byte_count*2, fout);
-	for (i = 0; i < byte_count*2; i++)
-		printf("%02x ",cipherkey[i]);
-	printf("cipher key\n");
 	fread(randomiv1, 1, byte_count, fout);
-	for (i = 0; i < byte_count; i++)
-		printf("%02x ",randomiv1[i]);
-	printf("random iv1\n");
 	fread(randomiv2, 1, byte_count, fout);
-	for (i = 0; i < byte_count; i++)
-		printf("%02x ",randomiv2[i]);
-	printf("random iv2\n");
+	fclose(fout);
 	/* use md5 generate 128 bit key */
 	MD5((unsigned char*)(passphrase.c_str()),
 		passphrase.length(), (unsigned char*)&digest);
 	/* decrypt cipherkey */
 	aesdecrypt(cipherkey, byte_count*2, digest, randomiv1, randomkey);
-	for (i = 0; i < byte_count; i++)
-		printf("%02x ",randomkey[i]);
-	printf("randomkey\n");
 	
 	fout = fopen(file_name.c_str(), "r");
 	/* Create and initialise the context */
@@ -121,14 +108,12 @@ int main(int argc, char *argv[])
 		handleErrors();
 	do{
 		m = fread(buff, 1, byte_count, fout);
-		if(1 != EVP_DecryptUpdate(ctx, plaintext, &len, buff, byte_count))
+		if(1 != EVP_DecryptUpdate(ctx, plaintext, &len, buff, m))
 			handleErrors();
 		fwrite(plaintext, 1, len, stdout);
 		if (m < byte_count) {
-			if(1 != EVP_DecryptFinal_ex(ctx, plaintext, &len)) 
-				handleErrors();
-			fwrite(plaintext, 1, len, stdout);
-			break;	
+			EVP_DecryptFinal_ex(ctx, plaintext, &len); 
+			fwrite(plaintext, 1, len, stdout);	
 		}	
 	}while(m == byte_count);
 	/* Clean up */

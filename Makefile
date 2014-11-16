@@ -38,9 +38,48 @@ objtestacl: objtestacl.o functions.o
 test:	clean build exec
 	@echo "------------"
 	su u1 -c "./objput -k abc doc < testfile"
-	@echo "------------"
 	su u1 -c "./objget -k abc doc"
-	
+	-su u1 -c "./objget -k abc do@"	
+	-su u1 -c "./objget -k 123 doc"
+	-su u2 -c "./objput -k 123 u1+doc < testfile"
+	@echo "------------"
+	su u1 -c "./objsetacl doc < newacl2"
+	-su u1 -c "./objsetacl doc < erroracl1"
+	-su u1 -c "./objsetacl doc < erroracl2"
+	@echo "------------"
+	su u1 -c "./objgetacl doc"
+	-su u2 -c "./objput -k 123 u1+doc < testfile2"
+	-su u2 -c "./objget -k 123 u1+doc"
+	@echo "------------"
+	su u1 -c "./objput -k abc bin < binfile"
+	su u1 -c "./objget -k abc bin | wc -c"
+	cat binfile | wc -c
+	@echo "------------"
+	su u1 -c "./objput -k abc bigbin < bigbinfile"
+	su u1 -c "./objget -k abc bigbin | wc -c"
+	cat bigbinfile | wc -c
+	@echo "------------"
+	su u1 -c "./objlist"
+	@echo "------------"
+	su u1 -c "./objlist -l"
+	@echo "------------"
+	-su u2 -c "./objgetacl u1+doc"
+	@echo "------------"
+	su u1 -c "./objtestacl -a r doc"
+	@echo "------------"
+	su u1 -c "./objtestacl -a x doc"
+	@echo "------------"
+	su u2 -c "./objtestacl -a r u1+doc"
+	@echo "------------"
+	su u1 -c "./objsetacl doc < newacl"
+	su u1 -c "./objgetacl doc"
+	@echo "------------"
+	-su u2 -c "./objgetacl u1+doc"
+	@echo "------------"
+	-su u2 -c "./objsetacl u1+doc < newacl2"
+	@echo "------------"
+	su u2 -c "./objtestacl -a r u1+doc"
+	-su u2 -c "./objtestacl -a p u1+doc"
 	
 .PHONY: exec
 
@@ -74,4 +113,4 @@ endif
 clean:
 	-rm -f $(OBJ) *.core *.o *~ *.*~ .*~ /home/lanyang/*-* /home/lanyang/*_* userfile.txt
 	-rmdir /home/lanyang
-	-rm /home/objput /home/objget /home/objlist /home/objsetacl /home/objgetacl /home/objtestacl
+#	-rm /home/objput /home/objget /home/objlist /home/objsetacl /home/objgetacl /home/objtestacl

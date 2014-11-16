@@ -254,7 +254,7 @@ int aesdecrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key
 	/* Finalise the decryption. Further plaintext bytes may be written at
 	 * this stage.
 	 */
-	if(1 != EVP_DecryptFinal_ex(ctx, plaintext + len, &len)) handleErrors();
+	EVP_DecryptFinal_ex(ctx, plaintext + len, &len);
 	plaintext_len += len;
 	
 	/* Clean up */

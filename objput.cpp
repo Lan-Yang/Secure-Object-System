@@ -19,21 +19,17 @@ int main(int argc, char *argv[])
 	vector<string> object_name_parse;
 	FILE *fout;
 	FILE *fp;
-	/* int tmp; for getchar function, it needs to be int type */
 	struct passwd *tmp1 = NULL;
 	struct group *tmp2 = NULL;
 	const int byte_count = 16; /* generate 128 bits key and IV */
 	const int buff_count = 50;
 	unsigned char digest[MD5_DIGEST_LENGTH];
-	//unsigned char mdString[33];
 	unsigned char randomkey[buff_count];
 	unsigned char randomiv1[buff_count];
 	unsigned char randomiv2[buff_count];
 	unsigned char cipherkey[buff_count];
 	unsigned char buff[buff_count];
 	unsigned char ciphertext[buff_count];
-	int cipherkey_len;
-	//int ciphertext_len;
 	EVP_CIPHER_CTX *ctx;
 	int m = 0;
 	int len;
@@ -100,8 +96,8 @@ int main(int argc, char *argv[])
 		}
 	}
 	if ((fout == NULL) && (uname2 != uname)) {
-		cerr << uname << " has no permission to create doc belongs to " << uname2 <<
-		     endl;
+		cerr << uname << " has no permission to create doc belongs to " 
+					<< uname2 << endl;
 		return 1;
 	}
 	/* check if user has permission to write */
@@ -146,50 +142,26 @@ int main(int argc, char *argv[])
 	/* use md5 generate 128 bit key */
 	MD5((unsigned char*)(passphrase.c_str()),
 		passphrase.length(), (unsigned char*)&digest);
-	/* test 
-	for(int i = 0; i < 16; i++)
-		sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
-	printf("md5 digest: %s\n", mdString);*/
 	/* generate 128 bit random number */
 	fp = fopen("/dev/urandom", "r");
 	fread(&randomkey, 1, byte_count, fp);
 	fclose(fp);
-	for (int i = 0; i < byte_count; i++)
-		printf("%02x ",randomkey[i]);
-	printf("random numer\n");
 	/* generate 128 bit random iv1 */
 	fp = fopen("/dev/urandom", "r");
 	fread(&randomiv1, 1, byte_count, fp);
 	fclose(fp);
-	for (int i = 0; i < byte_count; i++)
-		printf("%02x ",randomiv1[i]);
-	printf("random iv1\n");
 	/* generate 128 bit random iv1 */
 	fp = fopen("/dev/urandom", "r");
 	fread(&randomiv2, 1, byte_count, fp);
 	fclose(fp);
-	for (int i = 0; i < byte_count; i++)
-		printf("%02x ",randomiv2[i]);
-	printf("random iv2\n");
 	/* Initialise the library */
 	ERR_load_crypto_strings();
 	OpenSSL_add_all_algorithms();
 	OPENSSL_config(NULL);
 	/* encrypt random number using ASE */
-	cipherkey_len = aesencrypt(randomkey, byte_count, digest, randomiv1,
+	aesencrypt(randomkey, byte_count, digest, randomiv1,
 				 cipherkey);
-	printf("aes key length: %d\n", cipherkey_len);
-	for (int i = 0; i < cipherkey_len; i++)
-		printf("%02x ",cipherkey[i]);
-	printf("cipher key\n");
 	/* encrypt plaint text using AES */
-
-	/* write into file 
-	fout = fopen(file_name.c_str(), "w");
-	while ((tmp = getchar()) != EOF)
-		fputc(tmp, fout);
-	fclose(fout); */
-
 	/* write into a temporary file and encrypt it */
 	fout = fopen(file_name.c_str(), "w");
 	if(!(ctx = EVP_CIPHER_CTX_new())) handleErrors();
@@ -197,7 +169,7 @@ int main(int argc, char *argv[])
 		handleErrors();
 	do{
 		m = fread(buff, 1, byte_count, stdin);
-		if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len, buff, byte_count))
+		if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len, buff, m))
 			handleErrors();
 		fwrite(ciphertext, 1, len, fout);
 		if (m < byte_count) {

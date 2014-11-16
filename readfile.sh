@@ -11,7 +11,7 @@ do
 	else
 		username=${a[0]}
 		groupname=${a[1]}
-		#userdel $username
+		userdel -r $username
 		groupadd $groupname
 		useradd -g $groupname $username
 		echo $username:$username | chpasswd

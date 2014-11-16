@@ -57,7 +57,7 @@ bool check_user_group(const string &uname, const string &gname)
 
 	if (uname == "*" && gname == "*")
 		return true;
-	file.open("userfile.txt");
+	file.open("/home/security-ly2331/userfile.txt");
 	if (!file) {
 		cerr << "file can not open" << endl;
 		return false;
@@ -115,7 +115,7 @@ bool check_user(const string &uname)
 
 	if (uname == "*")
 		return true;
-	file.open("userfile.txt");
+	file.open("/home/security-ly2331/userfile.txt");
 	if (!file) {
 		cerr << "file can not open" << endl;
 		return false;

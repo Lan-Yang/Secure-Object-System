@@ -1,4 +1,12 @@
 README by Lan Yang (uni: ly2331)
+HMWK3:
+
+Absolute path:
+/home/security-ly2331 :store executables
+/home/lanyang :store objects, acl objects and encrypted keys.
+All test files are in the path which unzipped tar file.
+
+
 HMWK2:
 For this homework, programs use the actual user and group ID
 by functions like getuid() and getgid(). And the initial user
